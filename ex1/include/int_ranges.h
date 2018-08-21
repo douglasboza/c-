@@ -15,8 +15,10 @@ namespace ir {
      */
     value_type * copy( const value_type * , const value_type *, value_type* );
 
+    const value_type * min(const value_type *first, const value_type *last );
+
     /// Returns a pointer to the first occurrency of the smallest element the range.
-    const value_type * min( const value_type *, const value_type * );
+    // const value_type * min( const value_type *, const value_type * );
 
     /// Reverse the order of the elements in range `[first;last)`.
     void reverse( value_type *first, value_type*last );

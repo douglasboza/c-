@@ -2,8 +2,7 @@
 #include <iterator> // begin, end
 #include <sstream>  // ostringstream
 #include <algorithm> // for_each
-
-#include "int_ranges.h"
+#include "../include/int_ranges.h"
 
 std::string print( const int* first, const int* last )
 {
@@ -17,11 +16,15 @@ std::string print( const int* first, const int* last )
 
 int main (void)
 {
-    int A[]{1,2,3,4,5,6};
+    int A[]{1,2,3,0,5,6};
+    //std::cout << std::begin(A);
 
-    std::cout << ">>> A: " << print( std::begin(A), std::end(A) ) << std::endl;
-    ir::negate( std::begin(A), std::end(A) );
-    std::cout << ">>> A: " << print( std::begin(A), std::end(A) ) << std::endl;
+    // std::cout << ">>> A: " << print( std::begin(A), std::end(A) ) << std::endl;
+    // ir::negate( std::begin(A), std::end(A) );
+    // std::cout << ">>> A: " << print( std::begin(A), std::end(A) ) << std::endl;
+
+    auto b = ir::min(std::begin(A), std::end(A) );
+    std::cout << *b << std::endl;
 
     return EXIT_SUCCESS;
 }
