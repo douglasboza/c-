@@ -84,6 +84,44 @@ TEST(IntRange, ScalarBasic){
 }
 
 
+TEST(IntRange, dot_productBasic){
+    ir::value_type A[]{ 1, 2 };
+    ir::value_type A_E[]{ 3, 6 };
+    ir::value_type ret = 15;
+    ir::value_type ret_func = ir::dot_product(std::begin(A), std::end(A), std::begin(A_E));
+    ASSERT_EQ(ret_func, ret);
+}
+
+TEST(IntRange, dot_productNull){
+    ir::value_type A[]{0};
+    ir::value_type A_E[]{0};
+    ir::value_type ret = 0;
+    ir::value_type ret_func = ir::dot_product(std::begin(A), std::end(A), std::begin(A_E));
+    ASSERT_EQ(ret_func, ret);
+}
+
+TEST(IntRange, compactBasic){
+    ir::value_type A[]{-2, -8, 2, 7, -3, 10, 1, 0, -3, 7};
+    ir::value_type A_E[]{2, 7, 10, 1, 7, 10, 1, 0, -3, 7};
+    ir::value_type * retorno_esperado = std::begin(A) + 5; // ponteiro que deve ser retornado na função
+    ir::value_type * retorno = ir::compact( std::begin(A), std::end(A) );
+   
+    ASSERT_EQ( std::distance( std::begin(A), std::end(A) ), std::distance( std::begin(A_E), std::end(A_E) ) );
+    ASSERT_TRUE( std::equal( std::begin(A), std::end(A), std::begin(A_E) ) );
+    ASSERT_EQ( retorno, retorno_esperado );
+}
+
+TEST(IntRange, copyBasic){
+    ir::value_type A[]{-1, 2, 3, 4, 5};
+    ir::value_type A_E[]{0, 0, 0, 0, 0};
+    ir::value_type * retorno_esperado = std::end(A_E); // ponteiro que deve ser retornado na função
+    ir::value_type * retorno = ir::copy( std::begin(A), std::end(A), std::begin(A_E));
+   
+    ASSERT_EQ( std::distance( std::begin(A), std::end(A) ), std::distance( std::begin(A_E), std::end(A_E) ) );
+    ASSERT_TRUE( std::equal( std::begin(A), std::end(A), std::begin(A_E) ) );
+    ASSERT_EQ( retorno, retorno_esperado );
+}
+
 int main(int argc, char** argv){
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
