@@ -15,8 +15,12 @@ std::string print( const int* first, const int* last ){
 
 int main (void){
     // int A[]{-2, -8, 2, 7, -3, 10, 1, 0, -3, 7};
-    // int A_E[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-    int A[]{2, 1, 2, 2, 4, 5, 6, 4, 1, 8};
+    // int A[]{0, 0, 1, 1, 0, 1, 0, 1, 0, 0};
+    // int A[]{-5, 7, 10, 7, 8, 9, 1, 7, -2, 3};
+    int A[] = {1, 2, 3, 4, 5, 6};
+    // int a = 3;
+
+    // int A[]{2, 1, 2, 2, 4, 5, 6, 4, 1, 8};
 
     //std::cout << std::begin(A);
 
@@ -28,13 +32,20 @@ int main (void){
 
     // ir::reverse(std::begin(A), std::end(A) );
     // ir::compact( std::begin(A), std::end(A));
+    // std::cout << *( std::begin(A) + 3) << std::endl;
 
-    ir::unique( std::begin(A), std::end(A));
+    // ir::partition( std::begin(A), std::end(A), std::begin(A) + 3);
+
+    ir::rotate(std::begin(A), std::begin(A) + 3, std::end(A));
+    // ir::rotate(std::begin(A), std::begin(A) + 2 , std::end(A) - 2);
+    // ir::rotate(std::begin(A), std::begin(A) + 2 , std::end(A) - 4);
+            // rotate(first, n_first, last - 2);
 
     for (auto i(std::begin(A)); i != std::end(A); ++i){
-          std::cout << * i << std::endl; 
+          std::cout << * i << " "; 
     }
-    // std::cout << *(std::end(A_E)-1) << std::endl;
+    // [ −5, 3, −2, 1, 7, 7, 7, 9, 8, 10 ]
+
 
     return EXIT_SUCCESS;
 }

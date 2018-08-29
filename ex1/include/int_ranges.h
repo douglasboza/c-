@@ -35,5 +35,13 @@ namespace ir {
 
     int * unique(int * first , int * last);
 
+    int * sort_marbles(int * first , int * last);
+
+    //rearranja (movimenta) os elementos do intervalo [ first , last ) com base em no valor apon-tado por pivot
+    void partition(int * first , int * last , int * pivot);
+
+    // rotaciona para a esquerda os elementos do intervalo
+    void rotate(int * first, int * n_first, int * last);
+
 }
 #endif
