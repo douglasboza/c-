@@ -17,7 +17,7 @@ int main (void){
     // int A[]{-2, -8, 2, 7, -3, 10, 1, 0, -3, 7};
     // int A[]{0, 0, 1, 1, 0, 1, 0, 1, 0, 0};
     // int A[]{-5, 7, 10, 7, 8, 9, 1, 7, -2, 3};
-    int A[] = {1, 2, 3, 4, 5, 6};
+    // int A[] = {1, 2};
     // int a = 3;
 
     // int A[]{2, 1, 2, 2, 4, 5, 6, 4, 1, 8};
@@ -36,15 +36,25 @@ int main (void){
 
     // ir::partition( std::begin(A), std::end(A), std::begin(A) + 3);
 
-    ir::rotate(std::begin(A), std::begin(A) + 3, std::end(A));
+    // ir::rotate(std::begin(A), std::begin(A) + 1, std::end(A));
     // ir::rotate(std::begin(A), std::begin(A) + 2 , std::end(A) - 2);
     // ir::rotate(std::begin(A), std::begin(A) + 2 , std::end(A) - 4);
             // rotate(first, n_first, last - 2);
 
-    for (auto i(std::begin(A)); i != std::end(A); ++i){
-          std::cout << * i << " "; 
-    }
+    // for (auto i(std::begin(A)); i != std::end(A); ++i){
+          // std::cout << * i << " "; 
+    // }
     // [ −5, 3, −2, 1, 7, 7, 7, 9, 8, 10 ]
+
+    int A[]{ 1, 2, 3, 4, 5 };
+    // ir::value_type A_E[]{ 1, 4, 3, 2, 5};
+        ir::reverse(std::begin(A), std::end(A) );
+    // ASSERT_EQ( std::distance( std::begin(A), std::end(A) ), std::distance( std::begin(A_E), std::end(A_E) ) );
+    // ASSERT_TRUE( std::equal( std::begin(A), std::end(A), std::begin(A_E) ) );
+
+    for (auto i(std::begin(A)); i != std::end(A); ++i){
+          // std::cout << * i << " "; 
+    }
 
 
     return EXIT_SUCCESS;

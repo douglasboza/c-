@@ -71,17 +71,33 @@ TEST(IntRange, ReverseBasic){
     ir::value_type A_E[]{ 1, 4, 3, 2, 5};
     ir::reverse( std::begin(A), std::end(A) );
     ASSERT_EQ( std::distance( std::begin(A), std::end(A) ), std::distance( std::begin(A_E), std::end(A_E) ) );
+    ASSERT_TRUE( std::equal( std::begin(A), std::end(A), std::begin(A_E) ) );
+
+    for (auto i(std::begin(A)); i != std::end(A); ++i){
+          std::cout << * i << " "; 
+    }
+
+
     ir::reverse( std::begin(A), std::end(A) );
     ir::reverse( std::begin(A_E), std::end(A_E) );    
     ASSERT_EQ( std::distance( std::begin(A), std::end(A) ), std::distance( std::begin(A_E), std::end(A_E) ) );
+    ASSERT_TRUE( std::equal( std::begin(A), std::end(A), std::begin(A_E) ) );
 }
 
-TEST(IntRange, ScalarBasic){
-    ir::value_type A[]{ 1, 2, 3, 4, 5 };
-    ir::value_type A_E[]{ 3, 6, 9, 12, 15};
-    ir::scalar_multiplication( std::begin(A), std::end(A), 3 );
-    ASSERT_EQ( std::distance( std::begin(A), std::end(A) ), std::distance( std::begin(A_E), std::end(A_E) ) );
-}
+// TEST(IntRange, ReverseOne){
+//     ir::value_type A[]{1};
+//     ir::value_type A_E[]{1};
+//     ir::reverse( std::begin(A), std::end(A) );
+//     ASSERT_EQ( std::distance( std::begin(A), std::end(A) ), std::distance( std::begin(A_E), std::end(A_E) ) );
+//     ASSERT_TRUE( std::equal( std::begin(A), std::end(A), std::begin(A_E) ) );
+// }
+
+// TEST(IntRange, ScalarBasic){
+//     ir::value_type A[]{ 1, 2, 3, 4, 5 };
+//     ir::value_type A_E[]{ 3, 6, 9, 12, 15};
+//     ir::scalar_multiplication( std::begin(A), std::end(A), 3 );
+//     ASSERT_EQ( std::distance( std::begin(A), std::end(A) ), std::distance( std::begin(A_E), std::end(A_E) ) );
+// }
 
 
 TEST(IntRange, dot_productBasic){
@@ -255,6 +271,74 @@ TEST(IntRange, partitionOneNegate){
     ir::value_type A[]{-2};
     ir::value_type A_E[]{-2};
     ir::partition(std::begin(A), std::end(A), std::end(A) - 1); // posição com valor 2
+    ASSERT_TRUE(std::equal(std::begin(A), std::end(A), std::begin(A_E)));
+}
+
+TEST(IntRange, rotateBasic){
+    ir::value_type A[]{1, 2, 3, 4, 5, 6};
+    ir::value_type A_E[]{3, 4, 5, 6, 1, 2};
+    ir::value_type * n_first = std::begin(A) + 2;
+
+    ir::rotate(std::begin(A), n_first, std::end(A));
+        
+    ASSERT_EQ(std::distance(std::begin(A_E), std::end(A_E)), std::distance(std::begin(A), std::end(A)));
+    ASSERT_TRUE(std::equal(std::begin(A), std::end(A), std::begin(A_E)));
+}
+
+TEST(IntRange, rotateLast){
+    ir::value_type A[]{1, 1, 1, 2, 2, 2};
+    ir::value_type A_E[]{1, 1, 1, 2, 2, 2};
+    ir::value_type * n_first = std::begin(A) + 6;
+
+    ir::rotate(std::begin(A), n_first, std::end(A));
+        
+    ASSERT_EQ(std::distance(std::begin(A_E), std::end(A_E)), std::distance(std::begin(A), std::end(A)));
+    ASSERT_TRUE(std::equal(std::begin(A), std::end(A), std::begin(A_E)));
+}
+
+TEST(IntRange, rotateFirst){
+    ir::value_type A[]{1, 1, 1, 2, 2, 2};
+    ir::value_type A_E[]{1, 1, 1, 2, 2, 2};
+    ir::value_type * n_first = std::begin(A);
+
+    ir::rotate(std::begin(A), n_first, std::end(A));
+        
+    ASSERT_EQ(std::distance(std::begin(A_E), std::end(A_E)), std::distance(std::begin(A), std::end(A)));
+    ASSERT_TRUE(std::equal(std::begin(A), std::end(A), std::begin(A_E)));
+}
+
+
+TEST(IntRange, rotateDois){
+    ir::value_type A[]{1, 2};
+    ir::value_type A_E[]{2, 1};
+    ir::value_type * n_first = std::begin(A) + 1;
+
+    ir::rotate(std::begin(A), n_first, std::end(A));
+        
+    ASSERT_EQ(std::distance(std::begin(A_E), std::end(A_E)), std::distance(std::begin(A), std::end(A)));
+    ASSERT_TRUE(std::equal(std::begin(A), std::end(A), std::begin(A_E)));
+}
+
+TEST(IntRange, rotateUm){
+    ir::value_type A[]{-2};
+    ir::value_type A_E[]{-2};
+    ir::value_type * n_first = std::begin(A);
+
+    ir::rotate(std::begin(A), n_first, std::end(A));
+        
+    ASSERT_EQ(std::distance(std::begin(A_E), std::end(A_E)), std::distance(std::begin(A), std::end(A)));
+    ASSERT_TRUE(std::equal(std::begin(A), std::end(A), std::begin(A_E)));
+}
+
+
+TEST(IntRange, rotateTres){
+    ir::value_type A[]{-2, 1, 0};
+    ir::value_type A_E[]{1, 0, -2};
+    ir::value_type * n_first = std::begin(A) + 1;
+
+    ir::rotate(std::begin(A), n_first, std::end(A));
+        
+    ASSERT_EQ(std::distance(std::begin(A_E), std::end(A_E)), std::distance(std::begin(A), std::end(A)));
     ASSERT_TRUE(std::equal(std::begin(A), std::end(A), std::begin(A_E)));
 }
 

@@ -4,63 +4,65 @@
 
 namespace ir{
 
-    void negate( value_type * first, value_type * last ){
-    	std::cout << *first << std::endl;
-
-        while( first != last )
-            *first++ *= -1;
+    void negate(value_type * first, value_type * last){
+        while( first != last ){ // percorre cada elemento do array e inverte o valor
+            *first++ *= -1; 
+        }
     }
 
-    const value_type *min(const value_type *first, const value_type *last ) {
-     	const value_type * min = first;
-     	while( first != last ){
-			if(*min > *first){
-				min = first;
+    // Retorna um ponteiro para a primeira ocorrência do menorelemento no intervalo [ first , last )
+    const int * min(const int * first, const int * last) {
+     	const value_type * min = first; // Define o primeiro elemento para sendo o menor
+     	while( first != last ){ // Percorre o array
+			if(*min > *first){ // Verifica se os próximo elemento é menor que o min
+				min = first;   // Aponta o min para o novo elemento menor encontrado
 			}
-			first++;     	
+			first++;     	// Próxima posição do ponteiro no array
      	}
-     	return min;
+     	return min;   // Retorna a posição do enor elemento no intervalo
     }
 
-    void reverse(value_type *first, value_type *last ) {
-    	int j = 2;
-     	
-     	for (auto i( first+1 ); i != last-1; ++i){
-     		std::swap(*i, *(last-j));
-     		j = j + 1;
+    // Inverte a ordem dos elementos no intervalo [ first , last ) definido sobre um vetor de inteiros.
+    void reverse(value_type * first, value_type * last) {
+    	int j = 1;	// Para obter a posição do último ponteiro
+     	for (auto i(first); i != last; ++i){ // 
+			std::cout << * i<< " vira "<< * (last - j) << std::endl;
+     		std::swap(* i, * (last - j)); // inverte o valor dos primeiros elementos com os últimos elementos
+     		j++;
      	}
-
     }
 
+    // multiplica o inteiro 'num' passado por parâmetro por todos os elementos no intervalo [ first , last )
     void scalar_multiplication( value_type * first, value_type * last, value_type num ){
-     	for (auto i( first ); i != last; ++i){
-     		*i *= num;
+     	for (auto i( first ); i != last; ++i){ // Percorre cada elemento do intervalo
+     		*i *= num;  // Multiplica o valor do elemento pelo num
      	}
     }
 
+    // Calcula e retorna o produto escalar entre 2 vetores
     int dot_product(const int * a_first, const int * a_last, const int * b_first){
-    	int ret(0);
+    	int ret(0);  // Retorno
 
     	for (auto i(a_first); i != a_last; ++i){
-     		ret = ret + (* i) * (* b_first);
-     		b_first++;
+     		ret = ret + (* i) * (* b_first); // Multiplica os elementos na mesma posição dos intervalor e adiciona no ret
+     		b_first++; // Próxima posição do intervalo 
      	}
-
+   
      	return ret;
     }
 
+    // Compacta os elementos no intervalo [ first , last )
     int * compact( value_type * first, value_type * last ){
-    	value_type pos_atual(0);
+    	value_type pos_atual(0); // Posição que foi preenchida
 
-    	for (auto i(first); i != last; ++i){
-     		if( * i > 0 ){
-     			// std::cout << * i << std::endl;
-     			* (first + pos_atual) = * i;
-     			pos_atual++;
+    	for (auto i(first); i != last; ++i){ // Percorre cada elemento do intervalo
+     		if( * i > 0 ){ // Verifica se o elemento é maior que zero
+     			* (first + pos_atual) = * i; // Copia o valor desse elemento para o pos_atual do intervalo
+     			pos_atual++; // Próxima posição para ser preenchida
      		}
-
      	}
-     	return first + pos_atual;
+
+     	return first + pos_atual; // Retorna até quais posições foram preenchidas
     }
 
     int * copy ( const int * first , const int * last , int * d_destino ){
@@ -129,15 +131,19 @@ namespace ir{
 	} 
 
 	void rotate(int * first, int * n_first, int * last){
-		// 
+	// Função que realiza uma rotação à esquerda nos elementos do intervalo [ n_first , last )
 
 		int cont(1); // contagem enquanto percorre cada elemento do intervalo [first, last}
 		int total = std::distance(first, n_first); // tamanho do intervalo que será invertido
 		int total2 = std::distance(first, last); // quantidade de elementos do array
 		int vezes_rodou(0); // contagem para verificar se chegou no limite de intervalos [ first , last ) rotacionados
+		if(total2 == 2){ 
+			vezes_rodou = 10; // Para não resetar o 'for', caso só tenham dois elementos no array
+		}
 		
 		// Esse 'for' considera os elementos do intervalo [ first , n_first ) e inverte o valor deles com o intervalo [last - n_first, last}
 		for (auto i(n_first - 1); cont <= total; --i){
+			std::cout << (total2 / 2) << " vira "<< * (last - cont) << std::endl;
 			std::swap(* i, * (last - cont)); // iverte os valores
 			if(vezes_rodou <= (total2 / 2)){ // verfica se ainda restam intervalos de n_first elementos para serem invertidos
 				if( cont == total){ // Verifica se inverteu os elementos do intervalo [ first , last ) 
