@@ -20,6 +20,11 @@ int main (void){
     // int A[] = {1, 2};
     // int a = 3;
 
+    int A[]{2, 1, 2, 2, 4, 5, 6, 4, 1, 8};
+    ir::unique(std::begin(A), std::end(A) );
+
+    // ir::value_type A_E[]{2, 1, 4, 5, 6, 8};
+
     // int A[]{2, 1, 2, 2, 4, 5, 6, 4, 1, 8};
 
     //std::cout << std::begin(A);
@@ -46,15 +51,15 @@ int main (void){
     // }
     // [ −5, 3, −2, 1, 7, 7, 7, 9, 8, 10 ]
 
-    int A[]{ 1, 2, 3, 4, 5 };
-    // ir::value_type A_E[]{ 1, 4, 3, 2, 5};
-        ir::reverse(std::begin(A), std::end(A) );
-    // ASSERT_EQ( std::distance( std::begin(A), std::end(A) ), std::distance( std::begin(A_E), std::end(A_E) ) );
-    // ASSERT_TRUE( std::equal( std::begin(A), std::end(A), std::begin(A_E) ) );
+    // int A[]{ 1, 2, 3, 4, 5 };
+    // // ir::value_type A_E[]{ 1, 4, 3, 2, 5};
+    //     ir::reverse(std::begin(A), std::end(A) );
+    // // ASSERT_EQ( std::distance( std::begin(A), std::end(A) ), std::distance( std::begin(A_E), std::end(A_E) ) );
+    // // ASSERT_TRUE( std::equal( std::begin(A), std::end(A), std::begin(A_E) ) );
 
-    for (auto i(std::begin(A)); i != std::end(A); ++i){
-          // std::cout << * i << " "; 
-    }
+    // for (auto i(std::begin(A)); i != std::end(A); ++i){
+    //       // std::cout << * i << " "; 
+    // }
 
 
     return EXIT_SUCCESS;

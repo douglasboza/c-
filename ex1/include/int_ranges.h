@@ -31,17 +31,18 @@ namespace ir {
     /* Retorna um ponteiro para o elemento imediatamente posterior ao último elemento compactado que permanecerá no intervalo. 
     /  O processo move para o início do intervalo todos os elementos positivos e não nulos, mantendo a ordem relativa entre os elementos originais. 
     */
-
-    int * copy(const int * , const int *, int *);
     
     // copia dos elementos do intervalor `[first;last)` para o vetor destino, iniciado em d_first
     int * copy(const int * first , const int * last , int * d_first);
 
+    // Elimina repetições de elementos no intervalo [ first , last ),
     int * unique(int * first , int * last);
+    // Retorna um ponteiro após-o-final do intervalo resultante.
 
+    // Rearranja os elementos do intervalo usando apenas a operação de troca
     int * sort_marbles(int * first , int * last);
 
-    //rearranja (movimenta) os elementos do intervalo [ first , last ) com base em no valor apon-tado por pivot
+    // Rearranja os elementos do intervalo [ first , last ) com base em no valor apontado por pivot
     void partition(int * first , int * last , int * pivot);
 
     // rotaciona para a esquerda os elementos do intervalo

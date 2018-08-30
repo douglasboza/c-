@@ -5,31 +5,36 @@
 namespace ir{
 
     void negate(value_type * first, value_type * last){
+       
         while( first != last ){ // percorre cada elemento do array e inverte o valor
             *first++ *= -1; 
         }
+
     }
 
     // Retorna um ponteiro para a primeira ocorrência do menorelemento no intervalo [ first , last )
     const int * min(const int * first, const int * last) {
      	const value_type * min = first; // Define o primeiro elemento para sendo o menor
+     	
      	while( first != last ){ // Percorre o array
 			if(*min > *first){ // Verifica se os próximo elemento é menor que o min
 				min = first;   // Aponta o min para o novo elemento menor encontrado
 			}
 			first++;     	// Próxima posição do ponteiro no array
      	}
+
      	return min;   // Retorna a posição do enor elemento no intervalo
     }
 
     // Inverte a ordem dos elementos no intervalo [ first , last ) definido sobre um vetor de inteiros.
     void reverse(value_type * first, value_type * last) {
     	int j = 1;	// Para obter a posição do último ponteiro
-     	for (auto i(first); i != last; ++i){ // 
-			std::cout << * i<< " vira "<< * (last - j) << std::endl;
-     		std::swap(* i, * (last - j)); // inverte o valor dos primeiros elementos com os últimos elementos
+     	
+     	for (auto i(first); i != (first + (std::distance(first, last) / 2) ); ++i){ // percorre a metade dos elementos
+     		std::swap(* i, * (last - j)); // inverte o valor dos elementos da primeira metade com a segunda metade
      		j++;
      	}
+
     }
 
     // multiplica o inteiro 'num' passado por parâmetro por todos os elementos no intervalo [ first , last )
@@ -52,7 +57,7 @@ namespace ir{
     }
 
     // Compacta os elementos no intervalo [ first , last )
-    int * compact( value_type * first, value_type * last ){
+    int * compact(value_type * first, value_type * last){
     	value_type pos_atual(0); // Posição que foi preenchida
 
     	for (auto i(first); i != last; ++i){ // Percorre cada elemento do intervalo
@@ -65,52 +70,56 @@ namespace ir{
      	return first + pos_atual; // Retorna até quais posições foram preenchidas
     }
 
-    int * copy ( const int * first , const int * last , int * d_destino ){
-	 	for (auto i(first); i != last; ++i){
-     		* d_destino = * i;
-    		// std::cout << * d_destino << std::endl;
-     		d_destino++;
+    // Copia dos elementos do intervalor `[first;last)` para o vetor destino, iniciado em d_destino
+    int * copy(const int * first, const int * last, int * d_destino){
+	 	for (auto i(first); i != last; ++i){ // Percorre os elementos do intervaçp
+     		* d_destino = * i;	// Copia cada elemento para o novo intervalo
+     		d_destino++; // Move o ponteiro do novo intervalo
      	}
      	return d_destino;
     }
 
+    // Elimina repetições de elementos no intervalo [ first , last ),
     int * unique(int * first , int * last){
-    	int pos_total(0);
-    	int pos_preenchida(0);
-    	int pos_preenchida_temp(0);
-    	int teste(1);
+    	int pos_total(0); // Posição para percorrer o intervalo [ first , last )
+    	int pos_preenchida(0); // Posição que foi preenchida com um elemento não repetido anteriormente
+    	int pos_preenchida_temp(0); // Posição temporária para percorre os elementos não repetidos já preenchidos
+    	int teste(1); // Teste para verificar se o elemente já foi adicionado do intervalo novo
 
-    	for (auto i(first); i != last; ++i){
-	     	for (auto j(first); (j != last); ++j){
-	     		if( pos_preenchida_temp < (pos_preenchida) ){
-		     		if( * i == * j ){
+    	for (auto i(first); i != last; ++i){ // Percorre os elementos do intervalo [first, last)
+	     	for (auto j(first); j != last ; ++j){ // Percorre os elementos já preenchidos
+	     		if(pos_preenchida_temp < pos_preenchida){
+		     		if(* i == * j){
 		     			teste = 0;
 		     		}
 		     		pos_preenchida_temp++;
+	     		}else{
+	     			break; // final dos elementos já preenchidos
 	     		}
 	     	}
-	     	if(teste == 1){
+
+	     	if(teste == 1){ // Se teste == 1, então o elemento não foi preenchido no intervalo até ele
+	     		* (first + pos_preenchida) = * i; // Preenche com o elemento que não foi preenchido ainda
+	     		pos_preenchida++; // Próxima posição
 	     		// std::cout << * i << std::endl;
-	     		* (first + pos_preenchida) = * i;
-	     		pos_preenchida++;
 	     	}
-	     	teste = 1;
+	     	teste = 1; 
 	     	pos_preenchida_temp = 0;
 	     	pos_total++;
      	}
-		return first + pos_preenchida;
+		return first + pos_preenchida; // retorna até qual posição foi preenchida com elementos não repetidos anteriormente.
     }
 
 	int * sort_marbles(int * first , int * last){
 		int pos_limit(0); // final do intervalo com as casas pretas
 
-		for (auto i(first); i != last; ++i){
-			if(* i == 0){
-				std::swap(* (first + pos_limit), * i);
-				pos_limit++;
+		for (auto i(first); i != last; ++i){ // Percorre os elementos do array
+			if(* i == 0){ // Caso o elemento seja preto
+				std::swap(* (first + pos_limit), * i); // Inverte a posição do elemento preto com o próxima elemento do intervalo inicial com elementos pretos 
+				pos_limit++; // Próxima elemento preto para ser preenchido
 			}
 		}
-		return first + pos_limit;
+		return first + pos_limit; // Retorna o ponteido depois do último elemento preto
 	}   
 
 	void partition(int * first , int * last , int * pivot){
@@ -143,7 +152,7 @@ namespace ir{
 		
 		// Esse 'for' considera os elementos do intervalo [ first , n_first ) e inverte o valor deles com o intervalo [last - n_first, last}
 		for (auto i(n_first - 1); cont <= total; --i){
-			std::cout << (total2 / 2) << " vira "<< * (last - cont) << std::endl;
+			// std::cout << (total2 / 2) << " vira "<< * (last - cont) << std::endl;
 			std::swap(* i, * (last - cont)); // iverte os valores
 			if(vezes_rodou <= (total2 / 2)){ // verfica se ainda restam intervalos de n_first elementos para serem invertidos
 				if( cont == total){ // Verifica se inverteu os elementos do intervalo [ first , last ) 
