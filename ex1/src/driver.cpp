@@ -20,8 +20,8 @@ int main (void){
     // int A[] = {1, 2};
     // int a = 3;
 
-    int A[]{2, 1, 2, 2, 4, 5, 6, 4, 1, 8};
-    ir::unique(std::begin(A), std::end(A) );
+    // int A[]{0, 1};
+    // int *a = ir::sort_marbles(std::begin(A), std::end(A));
 
     // ir::value_type A_E[]{2, 1, 4, 5, 6, 8};
 
@@ -47,7 +47,7 @@ int main (void){
             // rotate(first, n_first, last - 2);
 
     // for (auto i(std::begin(A)); i != std::end(A); ++i){
-          // std::cout << * i << " "; 
+    //       std::cout << * a << " "; 
     // }
     // [ −5, 3, −2, 1, 7, 7, 7, 9, 8, 10 ]
 

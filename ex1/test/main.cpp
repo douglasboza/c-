@@ -216,6 +216,32 @@ TEST(IntRange, sort_marblesBasic){
     ASSERT_EQ(* retorno, 1);
 }
 
+TEST(IntRange, sort_marblesDois){
+    ir::value_type A[]{0, 1};
+    ir::value_type A_E[]{0, 1};
+    ir::value_type * retorno_esperado = A + 1; // valor do último ponteiro com os valores pretos
+    ir::value_type * retorno = ir::sort_marbles(std::begin(A), std::end(A));
+    
+    ASSERT_EQ(std::distance(std::begin(A_E), std::end(A_E)), std::distance(std::begin(A), std::end(A)));
+    ASSERT_TRUE(std::equal(std::begin(A), std::end(A), std::begin(A_E)));
+    ASSERT_EQ(* retorno, * retorno_esperado);
+    ASSERT_EQ(* (retorno - 1), 0);
+    ASSERT_EQ(* retorno, 1);
+}
+
+TEST(IntRange, sort_marblesTres){
+    ir::value_type A[]{1, 0, 0};
+    ir::value_type A_E[]{0, 0, 1};
+    ir::value_type * retorno_esperado = A + 2; // valor do último ponteiro com os valores pretos
+    ir::value_type * retorno = ir::sort_marbles(std::begin(A), std::end(A));
+    
+    ASSERT_EQ(std::distance(std::begin(A_E), std::end(A_E)), std::distance(std::begin(A), std::end(A)));
+    ASSERT_TRUE(std::equal(std::begin(A), std::end(A), std::begin(A_E)));
+    ASSERT_EQ(* retorno, * retorno_esperado);
+    ASSERT_EQ(* (retorno - 1), 0);
+    ASSERT_EQ(* retorno, 1);
+}
+
 TEST(IntRange, sort_marblesBranco){
     ir::value_type A[]{1, 1, 1, 1, 1};
     ir::value_type A_E[]{1, 1, 1, 1, 1};

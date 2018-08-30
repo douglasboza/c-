@@ -110,6 +110,7 @@ namespace ir{
 		return first + pos_preenchida; // retorna até qual posição foi preenchida com elementos não repetidos anteriormente.
     }
 
+    // Rearranja os elementos do intervalo usando apenas a operação de troca
 	int * sort_marbles(int * first , int * last){
 		int pos_limit(0); // final do intervalo com as casas pretas
 
@@ -122,17 +123,23 @@ namespace ir{
 		return first + pos_limit; // Retorna o ponteido depois do último elemento preto
 	}   
 
+	// Rearranja os elementos do intervalo [ first , last ) com base em no valor apontado por pivot
 	void partition(int * first , int * last , int * pivot){
 		int pos_limit(0); // final do intervalo com os elementos menores que pivot
 		int pivot_val = * pivot;
 		int teste(0); // teste para verificar se já foi ordenado os elementos menores que pivot
 
 		for (auto i(first); i != last; ++i){
-			if(((* i < pivot_val) && (teste == 0)) || ((* i <= pivot_val) && (teste == 1))) {
-				std::swap(* (first + pos_limit), * i);
-				pos_limit++;
+			if(((* i < pivot_val) && (teste == 0)) || ((* i <= pivot_val) && (teste == 1))) { 
+				// Primeiro será feito a troca dos elementos menores que pivot
+				// Depois será feito a troca dos elementos iguais a pivot
+				// Por consequência, os elementos maiores que pivot ficarão no final
+				std::swap(* (first + pos_limit), * i); 
+				pos_limit++; // Ṕróxima posição do ponteiro que define os elementos já preenchidos corretamente
 			}
-			if((teste == 0) && (i == last - 1)){
+			if((teste == 0) && (i == last - 1)){ 
+				// Ao chegar no final do primeiro loop, o ponteiro volta para o final dos elementos menores que pivot
+				// Seta teste como 1 para preencher os elementos iguais a pivot
 				i = first + pos_limit;
 				teste = 1;
 			}
