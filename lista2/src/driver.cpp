@@ -30,6 +30,36 @@ bool INT_equal_to( const void *a, const void *b )
 
 int main (void){
 
+    // int A[]{ 1, 2, 3, 3, 4, 4, 2 };
+    // int A_E[]{ 1, 2, 3, 4};
+
+    // int * result;
+    // result = static_cast< int * >(graal::unique( std::begin(A), std::end(A), sizeof(A[0]), INT_equal_to));
+    
+    // std::cout << *((const int*) result-1) << std::endl; 
+    // std::cout << *((const int*) result-2) << std::endl;
+    // std::cout << *((const int*) result-3) << std::endl;
+    // std::cout << *((const int*) result-4) << std::endl;
+    // std::cout << *((const int*) result-5) << std::endl;
+
+    // int A[]{ 1, 2, 5, 2, 5, 1, 2, 7 };
+    // int A_E[]{ 1, 2, 5, 9 };
+
+    // int * result;
+    // result = static_cast< int * >( graal::unique( std::begin(A), std::end(A), sizeof(A[0]), INT_equal_to ));
+
+    // // ASSERT_TRUE( std::equal( std::begin(A), result, std::begin(A_E) ));
+    // std::cout << A[0] << std::endl; 
+    // std::cout << A[1] << std::endl; 
+    // std::cout << A[2] << std::endl; 
+    // std::cout << A[3] << std::endl; 
+    // std::cout << A[4] << std::endl; 
+    // std::cout << A[5] << std::endl; 
+    // std::cout << A[6] << std::endl; 
+    // std::cout << A[7] << std::endl; 
+
+    // ASSERT_TRUE( std::equal( std::begin(A), result, std::begin(A_E) ));
+
     // int A[]{ 'a', 'k', 'c', 'd', 'e' };
     // int A_E[]{ 'k' };
     // auto result = graal::find( std::begin(A), std::end(A), sizeof(A[0]), std::begin(A_E), INT_equal_to );

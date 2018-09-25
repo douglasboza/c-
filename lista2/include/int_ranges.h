@@ -10,6 +10,7 @@ namespace graal {
     using Compare = bool (*)(const void *, const void *);
     using Predicate = bool (*)(const void *);
     using Equal = bool (*)(const void *, const void *);
+    using CHAR_sort_comp = int (*)(const void *, const void *);
 
     typedef unsigned char byte;
 
@@ -43,6 +44,19 @@ namespace graal {
     bool all_of(const void* first, const void* last, size_t size, Predicate p);
     bool any_of(const void* first, const void* last, size_t size, Predicate p);
     bool none_of(const void* first, const void* last, size_t size, Predicate p);
+
+    bool equal(const void* first, const void* last, const void* first_d, size_t size, Equal eq);
+
+    bool equal(const void* first, const void* last, const void* first_d, const void* last_d, size_t size, Equal eq);
+
+    // Elimina repetições de elementos no intervalo [ first , last ),
+    void * unique(void *first, void * last, size_t size, Equal eq);
+
+    // Rearranja os elementos do intervalo [ first , last ) com base em no valor apontado por pivot
+    void * partition (void* first, void * last, size_t size, Predicate p);
+
+    void qsort (void* first, size_t count, size_t size, CHAR_sort_comp c);
+
 
 /*
 

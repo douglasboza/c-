@@ -56,17 +56,19 @@ namespace graal{
 	void reverse(void *first, void * last, size_t size){
    		byte *primeiro = static_cast< byte *>( const_cast <void *> (first));
      	byte *ultimo = static_cast< byte *>( const_cast <void *> (last));
-     	byte temp(0); 
-     	unsigned int total = std::distance(primeiro, ultimo)/size;
+     	// byte *temp;
+     	// temp = (byte*) malloc (size);
 
+     	unsigned int total = std::distance(primeiro, ultimo)/size;
      	for (unsigned int i = 0; i < total/2; ++i){ // percorre cada elemento até a metade do vetor
      		ultimo -= size; // elemento anterior começando do último
      		if(i != 0) primeiro += size; // próximo elemento
-     		
-	     	temp = *ultimo;      // realiza a troca dos valores
-	     	*ultimo = *primeiro;
-	     	*primeiro = temp;
+     		std::swap(*ultimo, *primeiro);
+     	 	// temp = *ultimo;      // realiza a troca dos valores
+	     	// *ultimo = *primeiro;
+	     	// *primeiro = temp;
 		}
+		std::cout << "===== passou final ==== " << std::endl; 
 	}
 
 	// Copia dos elementos do intervalor `[first;last)` para o vetor destino, iniciado em d_first
@@ -182,6 +184,136 @@ namespace graal{
      	return true; 
      }
 
+     bool equal(const void* first, const void* last, const void* first_d, size_t size, Equal eq){
+     	byte *primeiro = static_cast< byte *>( const_cast <void *> (first));
+     	byte *segundo = static_cast< byte *>( const_cast <void *> (first_d));
+     	byte *ultimo = static_cast< byte *>( const_cast <void *> (last));
+     	
+     	while(primeiro != ultimo){ // Percorre o array
+			if(!eq(primeiro, segundo)){ // Verifica se o próximo elemento é menor que o "menor"		 
+				return false; // retorna false se a comparação retornar false
+			}
+			segundo += size;
+			primeiro += size; // Próxima posição do ponteiro no array
+     	}
+
+     	return true;
+     }
+
+
+     bool equal(const void* first, const void* last, const void* first_d, const void* last_d, size_t size, Equal eq){
+     	byte *primeiro = static_cast< byte *>( const_cast <void *> (first));
+     	byte *ultimo = static_cast< byte *>( const_cast <void *> (last));
+     	byte *segundo = static_cast< byte *>( const_cast <void *> (first_d));
+     	byte *segundo_last = static_cast< byte *>( const_cast <void *> (last_d));
+     	
+     	while((primeiro != ultimo) && (segundo != segundo_last)){ // Percorre o array
+			if(!eq(primeiro, segundo)){ // Verifica se o próximo elemento é menor que o "menor"		 
+				return false;
+			}
+			segundo += size;
+			primeiro += size; // Próxima posição do ponteiro no array
+     	}
+     	if((primeiro == ultimo) && (segundo == segundo_last)){ // retorna true e a comparação não retornou false e são de mesmo tamanho
+     		return true;
+     	}
+
+     	return false;
+
+     }
+
+    // Elimina repetições de elementos no intervalo [ first , last ),
+    void * unique(void *first, void * last, size_t size, Equal eq){
+    	byte *primeiro = static_cast< byte *>( const_cast <void *> (first));
+     	// byte *intervalo_unique = static_cast< byte *>( const_cast <void *> (first));
+     	byte *ultimo = static_cast< byte *>( const_cast <void *> (last));
+ 
+    	int pos_total(0); // Posição para percorrer o intervalo [ first , last )
+    	int pos_preenchida(0); // Posição que foi preenchida com um elemento não repetido anteriormente
+    	int pos_preenchida_temp(0); // Posição temporária para percorre os elementos não repetidos já preenchidos
+    	int teste(1); // Teste para verificar se o elemente já foi adicionado do intervalo novo
+
+    	for (auto i(primeiro); i != ultimo; i=i+size){ // Percorre os elementos do intervalo [first, last)
+	     	
+	     	
+
+	     	for (auto j(primeiro); j != ultimo; j=j+size){ // Percorre os elementos já preenchidos
+	     		if(pos_preenchida_temp < pos_preenchida){
+		     		if(eq(i, j)){
+		     			teste = 0;
+		     		}
+		     		pos_preenchida_temp++;
+	     		}else{
+	     			break; // final dos elementos já preenchidos
+	     		}
+	     	}
+
+	     	if(teste == 1){ // Se teste == 1, então o elemento não foi preenchido no intervalo até ele
+	     		* (primeiro + pos_preenchida*size) = * i; // Preenche com o elemento que não foi preenchido ainda
+	     		pos_preenchida++; // Próxima posição
+	     		// std::cout << * i << std::endl;
+	     	}
+	     	teste = 1; 
+	     	pos_preenchida_temp = 0;
+	     	pos_total++;
+     	}
+		return primeiro + pos_preenchida*size; // r
+
+
+    }
+
+    void * partition(void * first, void * last, size_t size, Predicate p){
+    	byte *primeiro = static_cast< byte *>( const_cast <void *> (first));
+    	byte *ultimo = static_cast< byte *>( const_cast <void *> (last));
+    	int pos_limit(0); // final do intervalo com os elementos menores que pivot
+
+		for (auto i(primeiro); i != ultimo; i += size){
+			if(p(i)){ 
+				std::swap(* (primeiro + pos_limit*size), * i); 
+				pos_limit++; // Ṕróxima posição do ponteiro que define os elementos já preenchidos corretamente
+			}
+		}
+		return primeiro + pos_limit * size;
+    }	
+
+
+    void qsort(void* first, size_t count, size_t size, CHAR_sort_comp c){
+    	byte *primeiro = static_cast< byte *>( const_cast <void *> (first));
+     	byte aux;
+	    for(int j = count-1; j >= 1; j--){
+			for(int i = 0; i < j; i++){
+				if(*(primeiro + i*size) > *(primeiro + (i+1)*size)){
+					aux = *(primeiro + i*size);
+	                *(primeiro + i*size) = *(primeiro + (i+1)*size);
+	                *(primeiro + (i+1)*size) = aux;
+	            }
+	        }
+	    }
+    }
+
+
+	// Rearranja os elementos do intervalo [ first , last ) com base em no valor apontado por pivot
+	// void partition(int * first , int * last , int * pivot){
+	// 	int pos_limit(0); // final do intervalo com os elementos menores que pivot
+	// 	int pivot_val = * pivot;
+	// 	int teste(0); // teste para verificar se já foi ordenado os elementos menores que pivot
+
+	// 	for (auto i(first); i != last; ++i){
+	// 		if(((* i < pivot_val) && (teste == 0)) || ((* i <= pivot_val) && (teste == 1))) { 
+	// 			// Primeiro será feito a troca dos elementos menores que pivot
+	// 			// Depois será feito a troca dos elementos iguais a pivot
+	// 			// Por consequência, os elementos maiores que pivot ficarão no final
+	// 			std::swap(* (first + pos_limit), * i); 
+	// 			pos_limit++; // Ṕróxima posição do ponteiro que define os elementos já preenchidos corretamente
+	// 		}
+	// 		if((teste == 0) && (i == last - 1)){ 
+	// 			// Ao chegar no final do primeiro loop, o ponteiro volta para o final dos elementos menores que pivot
+	// 			// Seta teste como 1 para preencher os elementos iguais a pivot
+	// 			i = first + pos_limit;
+	// 			teste = 1;
+	// 		}
+	// 	}
+	// } 
 
 
 
