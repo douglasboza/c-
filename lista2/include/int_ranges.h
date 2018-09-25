@@ -8,6 +8,9 @@ namespace graal {
     // using value_type = int;
 
     using Compare = bool (*)(const void *, const void *);
+    using Predicate = bool (*)(const void *);
+    using Equal = bool (*)(const void *, const void *);
+
     typedef unsigned char byte;
 
     /// Negate all integer values in [first;last).
@@ -30,6 +33,17 @@ namespace graal {
 
     // copia dos elementos do intervalor `[first;last)` para o vetor destino, iniciado em d_first
     void * clone(const void * first, const void * last, size_t size);
+
+    // Procura  primeira ocorrência do elemento que satisfaz p no intervalo [first, last)
+    const void *find_if(const void * first, const void * last, size_t size, Predicate p);
+
+    // Retorna um ponteiro para a primeira ocorrênci que satisfaz eq passando o value e a oocorrência no intervalo
+    const void *find(const void* first, const void * last, size_t size, const void* value, Equal eq);
+
+    bool all_of(const void* first, const void* last, size_t size, Predicate p);
+    bool any_of(const void* first, const void* last, size_t size, Predicate p);
+    bool none_of(const void* first, const void* last, size_t size, Predicate p);
+
 /*
 
     // Multiplica o inteiro 'num' passado por parâmetro por todos os elementos no intervalo [ first , last )

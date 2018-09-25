@@ -176,109 +176,109 @@ TEST(IntRange, ClonePartOfArray)
 
 /*}}}*/
 /* IntRange -> find_if() tests {{{*/
-// TEST(IntRange, FindIfLotsAreBiggerThan)
-// {
-//     int A[]{ -10, -3, -4, 5, -2, 1 };
-//     auto result = graal::find_if( std::begin(A), std::end(A),
-//                                   sizeof(A[0]), INT_bigg_than );
-//     ASSERT_TRUE( (std::begin(A)+3) == result );
-// }
+TEST(IntRange, FindIfLotsAreBiggerThan)
+{
+    int A[]{ -10, -3, -4, 5, -2, 1 };
+    auto result = graal::find_if( std::begin(A), std::end(A),
+                                  sizeof(A[0]), INT_bigg_than );
+    ASSERT_TRUE( (std::begin(A)+3) == result );
+}
 
-// TEST(IntRange, FindIfOneIsBiggerThan)
-// {
-//     int A[]{ 1, 1, 1, 2, 1 };
-//     auto result = graal::find_if( std::begin(A), std::end(A),
-//                                   sizeof(A[0]), INT_bigg_than );
-//     ASSERT_TRUE( (std::begin(A)+3) == result );
-// }
-// TEST(IntRange, FindIfNoneIsBiggerThan)
-// {
-//     int A[]{ 1, 1, 1, 1 };
-//     auto result = graal::find_if( std::begin(A), std::end(A),
-//                                   sizeof(A[0]), INT_bigg_than );
-//     ASSERT_TRUE( std::end(A) == result );
-// }
+TEST(IntRange, FindIfOneIsBiggerThan)
+{
+    int A[]{ 1, 1, 1, 2, 1 };
+    auto result = graal::find_if( std::begin(A), std::end(A),
+                                  sizeof(A[0]), INT_bigg_than );
+    ASSERT_TRUE( (std::begin(A)+3) == result );
+}
+TEST(IntRange, FindIfNoneIsBiggerThan)
+{
+    int A[]{ 1, 1, 1, 1 };
+    auto result = graal::find_if( std::begin(A), std::end(A),
+                                  sizeof(A[0]), INT_bigg_than );
+    ASSERT_TRUE( std::end(A) == result );
+}
 // /*}}}*/
 // /* IntRange -> find() tests {{{*/
-// TEST(IntRange, FindLotsAreEqual)
-// {
-//     int A[]{ 'a', 'b', 'k', 'k', 'k' };
-//     int A_E[]{ 'k' };
-//     auto result = graal::find( std::begin(A), std::end(A), sizeof(A[0]),
-//                           std::begin(A_E), INT_equal_to );
-//     ASSERT_TRUE( (std::begin(A)+2) == result );
-// }
+TEST(IntRange, FindLotsAreEqual)
+{
+    int A[]{ 'a', 'b', 'k', 'k', 'k' };
+    int A_E[]{ 'k' };
+    auto result = graal::find( std::begin(A), std::end(A), sizeof(A[0]),
+                          std::begin(A_E), INT_equal_to );
+    ASSERT_TRUE( (std::begin(A)+2) == result );
+}
 
-// TEST(IntRange, FindThereIsOneEqual)
-// {
-//     int A[]{ 'b', 'a', 'q', 'l', 'k' };
-//     int A_E[]{ 'k' };
-//     auto result = graal::find( std::begin(A), std::end(A), sizeof(A[0]),
-//                           std::begin(A_E), INT_equal_to );
-//     ASSERT_TRUE( (std::begin(A)+4) == result );
-// }
+TEST(IntRange, FindThereIsOneEqual)
+{
+    int A[]{ 'b', 'a', 'q', 'l', 'k' };
+    int A_E[]{ 'k' };
+    auto result = graal::find( std::begin(A), std::end(A), sizeof(A[0]),
+                          std::begin(A_E), INT_equal_to );
+    ASSERT_TRUE( (std::begin(A)+4) == result );
+}
 
-// TEST(IntRange, FindNoneIsEqual)
-// {
-//     int A[]{ 'a', 'b', 'c', 'd', 'e' };
-//     int A_E[]{ 'k' };
-//     auto result = graal::find( std::begin(A), std::end(A), sizeof(A[0]),
-//                           std::begin(A_E), INT_equal_to );
-//     ASSERT_TRUE( std::end(A) == result );
-// }
+TEST(IntRange, FindNoneIsEqual)
+{
+    int A[]{ 'a', 'b', 'c', 'd', 'e' };
+    int A_E[]{ 'k' };
+    auto result = graal::find( std::begin(A), std::end(A), sizeof(A[0]),
+                          std::begin(A_E), INT_equal_to );
+    ASSERT_TRUE( std::end(A) == result );
+}
 // /*}}}*/
 // /* IntRange -> all_of() tests {{{*/
-// TEST(IntRange, AllOfAreBiggerThan)
-// {
-//     int A[]{ 10, 20, 30, 40, 50, 2, 80 };
-//     bool result;
+TEST(IntRange, AllOfAreBiggerThan)
+{
+    int A[]{ 10, 20, 30, 40, 50, 2, 80 };
+    bool result;
 
-//     result = graal::all_of( std::begin(A), std::end(A), sizeof(A[0]), INT_bigg_than );
-//     ASSERT_TRUE( result );
-// }
+    result = graal::all_of( std::begin(A), std::end(A), sizeof(A[0]), INT_bigg_than );
+    ASSERT_TRUE( result );
+}
 
-// TEST(IntRange, AllOfAreNotBiggerThan)
-// {
-//     int A[]{ 10, 20, 1, 30, 40, 80, 1 };
-//     bool result;
+TEST(IntRange, AllOfAreNotBiggerThan)
+{
+    int A[]{ 10, 20, 1, 30, 40, 80, 1 };
+    bool result;
 
-//     result = graal::all_of( std::begin(A), std::end(A), sizeof(A[0]), INT_bigg_than );
-//     ASSERT_FALSE( result );
-// }
+    result = graal::all_of( std::begin(A), std::end(A), sizeof(A[0]), INT_bigg_than );
+    ASSERT_FALSE( result );
+}
 // /*}}}*/
 // /* IntRange -> any_of() tests {{{*/
-// TEST(IntRange, AnyOfAreBiggerThan)
-// {
-//     int A[]{ 1, -10, -20, -30, 2, 1, 1 };
-//     bool result;
-//     result = graal::any_of( std::begin(A), std::end(A), sizeof(A[0]), INT_bigg_than );
-//     ASSERT_TRUE( result );
-// }
+TEST(IntRange, AnyOfAreBiggerThan)
+{
+    int A[]{ 1, -10, -20, -30, 2, 1, 1 };
+    bool result;
+    result = graal::any_of( std::begin(A), std::end(A), sizeof(A[0]), INT_bigg_than );
+    ASSERT_TRUE( result );
+}
 
-// TEST(IntRange, AnyOfAreNotBiggerThan)
-// {
-//     int A[]{ 1, 1, 1, 1, 1, 1, 1 };
-//     bool result;
-//     result = graal::any_of( std::begin(A), std::end(A), sizeof(A[0]), INT_bigg_than );
-//     ASSERT_FALSE( result );
-// }
+TEST(IntRange, AnyOfAreNotBiggerThan)
+{
+    int A[]{ 1, 1, 1, 1, 1, 1, 1 };
+    bool result;
+    result = graal::any_of( std::begin(A), std::end(A), sizeof(A[0]), INT_bigg_than );
+    ASSERT_FALSE( result );
+}
 // /*}}}*/
 // /* IntRange -> none_of() tests {{{*/
-// TEST(IntRange, NoneOfAreBiggerThan)
-// {
-//     int A[]{ 1, 1, 1, 1, 1, 1, 1 };
-//     bool result;
-//     result = graal::none_of( std::begin(A), std::end(A), sizeof(A[0]), INT_bigg_than );
-//     ASSERT_TRUE( result );
-// }
+TEST(IntRange, NoneOfAreBiggerThan)
+{
+    int A[]{ 1, 1, 1, 1, 1, 1, 1 };
+    bool result;
+    result = graal::none_of( std::begin(A), std::end(A), sizeof(A[0]), INT_bigg_than );
+    ASSERT_TRUE( result );
+}
 
-// TEST(IntRange, NoneOfAreNotBiggerThan)
-// {
-//     int A[]{ 1, 1, 1, 1, 10, 1, 1, 1, 1 };
-//     bool result;
-//     result = graal::none_of( std::begin(A), std::end(A), sizeof(A[0]), INT_bigg_than );
-//     ASSERT_FALSE( result );
-// }
+TEST(IntRange, NoneOfAreNotBiggerThan)
+{
+    int A[]{ 1, 1, 1, 1, 10, 1, 1, 1, 1 };
+    bool result;
+    result = graal::none_of( std::begin(A), std::end(A), sizeof(A[0]), INT_bigg_than );
+    ASSERT_FALSE( result );
+}
 // /*}}}*/
 // /* IntRange -> type1 equal() tests {{{*/
 // TEST(IntRange, AllAreEqualType1)

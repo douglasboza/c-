@@ -94,8 +94,6 @@ namespace graal{
      	unsigned int total = std::distance(primeiro, ultimo)/size;
 
 		d_first = new char[total*size];
-
-		
 		byte *primeiro_destino = static_cast< byte *>(const_cast <void *> (d_first));
 
 		for (unsigned int i = 0; i < total; ++i){ // percorre cada elemento até a metade do vetor
@@ -106,9 +104,85 @@ namespace graal{
 
    	     	*primeiro_destino = *primeiro;
      		// std::cout << *((const int *) primeiro_destino) << std::endl;  
-		}
+		}	
+
      	return primeiro_destino - total*size + 1*size;
 	}
+
+
+	const void *find_if(const void * first, const void * last, size_t size, Predicate p){
+		byte *primeiro = static_cast< byte *>( const_cast <void *> (first));
+     	byte *posicao = static_cast< byte *>( const_cast <void *> (last)); 
+     	byte *ultimo = static_cast< byte *>( const_cast <void *> (last)); 
+     	
+     	while(primeiro != ultimo){ // Percorre o array
+			if(p(primeiro)){ // Verifica se o próximo elemento satisfaz p 
+				posicao = primeiro; // aponta a posicao para o novo elemento
+				return posicao;
+			}
+			primeiro += size; // Próxima posição do ponteiro no array
+     	}
+
+     	return posicao; // Retorna a posição do primeiro elemento que satisfaz p ou para last se nenhum elemento satisfaz p
+	}
+
+	// Retorna um ponteiro para a primeira ocorrênci que satisfaz eq passando o value e a oocorrência no intervalo
+	const void *find(const void* first, const void * last, size_t size, const void* value, Equal eq){
+		byte *primeiro = static_cast< byte *>( const_cast <void *> (first));
+     	byte *posicao = static_cast< byte *>( const_cast <void *> (last)); 
+     	byte *ultimo = static_cast< byte *>( const_cast <void *> (last)); 
+     	
+     	while(primeiro != ultimo){ // Percorre o array
+			if(eq(primeiro, value)){ // Verifica se o próximo elemento satisfaz p 
+				posicao = primeiro; // aponta a posicao para o novo elemento
+				return posicao;
+			}
+			primeiro += size; // Próxima posição do ponteiro no array
+     	}
+     	return posicao; // Retorna a posição do primeiro elemento que satisfaz p ou para last se nenhum elemento satisfaz p
+	}
+
+	
+    bool all_of(const void* first, const void* last, size_t size, Predicate p){
+		byte *primeiro = static_cast< byte *>( const_cast <void *> (first));
+     	byte *ultimo = static_cast< byte *>( const_cast <void *> (last)); 
+
+     	while(primeiro != ultimo){ // Percorre o array
+			if(!p(primeiro)){ // Verifica se o próximo elemento satisfaz p 
+				return false;	
+			}
+			primeiro += size; // Próxima posição do ponteiro no array
+     	}
+     	return true; // Retorna a posição do primeiro elemento que satisfaz p ou para last se nenhum elemento satisfaz p
+	}
+
+    bool any_of(const void* first, const void* last, size_t size, Predicate p){
+		byte *primeiro = static_cast< byte *>( const_cast <void *> (first));
+     	byte *ultimo = static_cast< byte *>( const_cast <void *> (last)); 
+     	
+     	while(primeiro != ultimo){ // Percorre o array
+			if(p(primeiro)){ // Verifica se o próximo elemento satisfaz p 
+				return true;
+			}
+			primeiro += size; 
+     	}
+     	return false; 
+	}
+
+    bool none_of(const void* first, const void* last, size_t size, Predicate p){
+		byte *primeiro = static_cast< byte *>( const_cast <void *> (first));
+     	byte *ultimo = static_cast< byte *>( const_cast <void *> (last)); 
+     	
+     	while(primeiro != ultimo){ // Percorre o array
+			if(p(primeiro)){ // Verifica se o próximo elemento satisfaz p 
+				return false;
+			}
+			primeiro += size; // Próxima posição do ponteiro no array
+     	}
+     	return true; 
+     }
+
+
 
 
  //    int * copy(const int * first, const int * last, int * d_destino){

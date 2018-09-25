@@ -13,8 +13,29 @@ bool cmp_int(const void* n1, const void* n2){
     return false;
 }
 
+bool p(const void *c){
+    const int *c_c = static_cast< const int * >(c);
+    return *c_c > 1;
+}
+
+bool INT_equal_to( const void *a, const void *b )
+{ 
+    const int *a_ = static_cast< const int * >(a);
+    const int *b_ = static_cast< const int * >(b);
+
+    return *a_ == *b_;
+};
+
+
 
 int main (void){
+
+    // int A[]{ 'a', 'k', 'c', 'd', 'e' };
+    // int A_E[]{ 'k' };
+    // auto result = graal::find( std::begin(A), std::end(A), sizeof(A[0]), std::begin(A_E), INT_equal_to );
+    // std::cout << *((const char*) result) << std::endl; 
+
+
     // int vetor[]{1, 2, 3, 4, 5};
 
 
@@ -23,21 +44,28 @@ int main (void){
     // int A[]{'a', 'f', 'f', 'l'};
 
     // int *result = static_cast< int *>(graal::clone( std::begin(A), std::end(A), sizeof(A[0]) ));
-    int A[]{ 'a', 'b', 'c', 'd', 'e', 'f', 'g' };
+    // int A[]{ 'a', 'b', 'c', 'd', 'e', 'f', 'g' };
 
-    int *result = static_cast< int *>(graal::clone( std::begin(A)+3, std::end(A), sizeof(A[0]) ));
+    // int *result = static_cast< int *>(graal::clone( std::begin(A)+3, std::end(A), sizeof(A[0]) ));
     
 
-    std::cout << std::equal( std::begin(A)+3, std::end(A), result ) << std::endl; 
-    std::cout << (char) result[0] << std::endl; 
-    std::cout << (char) result[1] << std::endl; 
-    std::cout << (char) result[2] << std::endl; 
-    std::cout << (char) result[3] << std::endl; 
-    std::cout << (char) result[4] << std::endl; 
-    std::cout << (char) result[5] << std::endl; 
-    std::cout << (char) result[6] << std::endl; 
-    std::cout << (char) result[7] << std::endl; 
-    std::cout << (char) result[8] << std::endl; 
+    // std::cout << std::equal( std::begin(A)+3, std::end(A), result ) << std::endl; 
+    // std::cout << (char) result[0] << std::endl; 
+    // std::cout << (char) result[1] << std::endl; 
+    // std::cout << (char) result[2] << std::endl; 
+    // std::cout << (char) result[3] << std::endl; 
+    // std::cout << (char) result[4] << std::endl; 
+    // std::cout << (char) result[5] << std::endl; 
+    // std::cout << (char) result[6] << std::endl; 
+    // std::cout << (char) result[7] << std::endl; 
+    // std::cout << (char) result[8] << std::endl; 
+
+    
+    // int A[]{-10, -3, -4, 5, -2, 1};
+    // auto result = graal::find_if( std::begin(A), std::end(A), sizeof(A[0]), p);
+    // // ASSERT_TRUE( (std::begin(A)+3) == result );
+
+    // std::cout << result << std::endl; 
 
     // int vetor[]{1, 2, 3, 4, 5};
 
