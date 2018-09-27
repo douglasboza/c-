@@ -5,15 +5,12 @@
 #include "gtest/gtest.h"        // gtest lib
 #include "../include/int_ranges.h"   // header file for tested functions
 
-// little fix for qsort() function
-// using_lib::qsort(), using_lib being one of {std,graal}
 #define using_lib graal           // default lib to use on using_lib::function
 
 
 // ============================================================================
 //                                                     Tests for integer arrays
 // ============================================================================
-
 /*{{{*/
 /* Predicate function for int*/
 bool INT_bigg_than( const void *c )
@@ -31,32 +28,14 @@ bool INT_equal_to( const void *a, const void *b )
     return *a_ == *b_;
 };
 
-/* Sort function for int*/
-int INT_sort_comp( const void *a, const void *b )
-{
-    bool debug = false;
-    /* simple conversion to int, so we can work on */
-    const int * a_ = static_cast< const int * >(a);
-    const int * b_ = static_cast< const int * >(b);
+/* Boolean sort for int */
+bool INT_sort_comp( const void *a, const void *b ){
+    const int * m_a = static_cast< const int * >(a);
+    const int * m_b = static_cast< const int * >(b);
 
-    /* debug text */
-    if( debug ){
-        std::cout << "\tComparing: ";
-        std::cout << *a_ << " <-> " << *b_ << std::endl;
-    }
-
-    /* conditionals following the qsort() implementation */
-    if( *a_ < *b_ ){
-        if(debug) std::cout << "\t-1" << std::endl;
-        return -1;
-    } else if( *a_ > *b_ ){
-        if(debug) std::cout << "\t1" << std::endl;
-        return 1;
-    } else {
-        if(debug) std::cout << "\t0" << std::endl;
-        return 0;
-    }
+    return *m_a < *m_b;
 }
+
 /* IntRange -> min() tests {{{*/
 TEST(IntRange, MinBasic)
 {
@@ -119,7 +98,7 @@ TEST(IntRange, ReversePartOfArrayOdd)
     graal::reverse( std::begin(A)+1, std::begin(A)+6, sizeof(A[0]) );
     ASSERT_TRUE( std::equal( std::begin(A), std::end(A), std::begin(A_E) ) );
 }
-// /*}}}*/
+/*}}}*/
 /* IntRange -> copy() tests {{{*/
 TEST(IntRange, CopyEntireArray)
 {
@@ -156,32 +135,34 @@ TEST(IntRange, CopyUnaryArray)
     graal::copy( std::begin(A), std::end(A), std::begin(A_E), sizeof(A[0]) );
     ASSERT_TRUE( std::equal( std::begin(A), std::end(A), std::begin(A_E) ) );
 }
-// /*}}}*/
-// /* IntRange -> clone() tests {{{*/
+/*}}}*/
+/* IntRange -> clone() tests {{{*/
 TEST(IntRange, CloneEntireArray)
 {
-    int A[]{ 'a', 'b', 'c', 'd', 'e', 'f', 'g' };
+    int A[]{ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
 
     int *result = static_cast< int *>(graal::clone( std::begin(A), std::end(A), sizeof(A[0]) ));
     ASSERT_TRUE( std::equal( std::begin(A), std::end(A), result ) );
+    delete [] result;
 }
 
 TEST(IntRange, ClonePartOfArray)
 {
-    int A[]{ 'a', 'b', 'c', 'd', 'e', 'f', 'g' };
+    int A[]{ 10, 9, 8, 7, 6, 5, 4, 3, 2, 1 };
 
     int *result = static_cast< int *>(graal::clone( std::begin(A)+3, std::end(A), sizeof(A[0]) ));
     ASSERT_TRUE( std::equal( std::begin(A)+3, std::end(A), result ) );
+    delete [] result;
 }
 
 /*}}}*/
 /* IntRange -> find_if() tests {{{*/
 TEST(IntRange, FindIfLotsAreBiggerThan)
 {
-    int A[]{ -10, -3, -4, 5, -2, 1 };
+    int A[]{ -10, -3, -4, 5, 7, 4 };
     auto result = graal::find_if( std::begin(A), std::end(A),
                                   sizeof(A[0]), INT_bigg_than );
-    ASSERT_TRUE( (std::begin(A)+3) == result );
+    ASSERT_EQ( std::begin(A)+3, result );
 }
 
 TEST(IntRange, FindIfOneIsBiggerThan)
@@ -189,24 +170,24 @@ TEST(IntRange, FindIfOneIsBiggerThan)
     int A[]{ 1, 1, 1, 2, 1 };
     auto result = graal::find_if( std::begin(A), std::end(A),
                                   sizeof(A[0]), INT_bigg_than );
-    ASSERT_TRUE( (std::begin(A)+3) == result );
+    ASSERT_EQ( std::begin(A)+3, result );
 }
 TEST(IntRange, FindIfNoneIsBiggerThan)
 {
     int A[]{ 1, 1, 1, 1 };
     auto result = graal::find_if( std::begin(A), std::end(A),
                                   sizeof(A[0]), INT_bigg_than );
-    ASSERT_TRUE( std::end(A) == result );
+    ASSERT_EQ( std::end(A), result );
 }
-// /*}}}*/
-// /* IntRange -> find() tests {{{*/
+/*}}}*/
+/* IntRange -> find() tests {{{*/
 TEST(IntRange, FindLotsAreEqual)
 {
     int A[]{ 'a', 'b', 'k', 'k', 'k' };
     int A_E[]{ 'k' };
     auto result = graal::find( std::begin(A), std::end(A), sizeof(A[0]),
                           std::begin(A_E), INT_equal_to );
-    ASSERT_TRUE( (std::begin(A)+2) == result );
+    ASSERT_EQ( std::begin(A)+2, result );
 }
 
 TEST(IntRange, FindThereIsOneEqual)
@@ -215,7 +196,7 @@ TEST(IntRange, FindThereIsOneEqual)
     int A_E[]{ 'k' };
     auto result = graal::find( std::begin(A), std::end(A), sizeof(A[0]),
                           std::begin(A_E), INT_equal_to );
-    ASSERT_TRUE( (std::begin(A)+4) == result );
+    ASSERT_EQ( std::begin(A)+4, result );
 }
 
 TEST(IntRange, FindNoneIsEqual)
@@ -224,16 +205,17 @@ TEST(IntRange, FindNoneIsEqual)
     int A_E[]{ 'k' };
     auto result = graal::find( std::begin(A), std::end(A), sizeof(A[0]),
                           std::begin(A_E), INT_equal_to );
-    ASSERT_TRUE( std::end(A) == result );
+    ASSERT_EQ( std::end(A), result );
 }
-// /*}}}*/
-// /* IntRange -> all_of() tests {{{*/
+/*}}}*/
+/* IntRange -> all_of() tests {{{*/
 TEST(IntRange, AllOfAreBiggerThan)
 {
     int A[]{ 10, 20, 30, 40, 50, 2, 80 };
     bool result;
 
-    result = graal::all_of( std::begin(A), std::end(A), sizeof(A[0]), INT_bigg_than );
+    result = graal::all_of( std::begin(A), std::end(A),
+                            sizeof(A[0]), INT_bigg_than );
     ASSERT_TRUE( result );
 }
 
@@ -242,15 +224,17 @@ TEST(IntRange, AllOfAreNotBiggerThan)
     int A[]{ 10, 20, 1, 30, 40, 80, 1 };
     bool result;
 
-    result = graal::all_of( std::begin(A), std::end(A), sizeof(A[0]), INT_bigg_than );
+    result = graal::all_of( std::begin(A), std::end(A),
+                            sizeof(A[0]), INT_bigg_than );
     ASSERT_FALSE( result );
 }
-// /*}}}*/
-// /* IntRange -> any_of() tests {{{*/
+/*}}}*/
+/* IntRange -> any_of() tests {{{*/
 TEST(IntRange, AnyOfAreBiggerThan)
 {
     int A[]{ 1, -10, -20, -30, 2, 1, 1 };
     bool result;
+
     result = graal::any_of( std::begin(A), std::end(A), sizeof(A[0]), INT_bigg_than );
     ASSERT_TRUE( result );
 }
@@ -259,6 +243,7 @@ TEST(IntRange, AnyOfAreNotBiggerThan)
 {
     int A[]{ 1, 1, 1, 1, 1, 1, 1 };
     bool result;
+
     result = graal::any_of( std::begin(A), std::end(A), sizeof(A[0]), INT_bigg_than );
     ASSERT_FALSE( result );
 }
@@ -268,6 +253,7 @@ TEST(IntRange, NoneOfAreBiggerThan)
 {
     int A[]{ 1, 1, 1, 1, 1, 1, 1 };
     bool result;
+
     result = graal::none_of( std::begin(A), std::end(A), sizeof(A[0]), INT_bigg_than );
     ASSERT_TRUE( result );
 }
@@ -276,6 +262,7 @@ TEST(IntRange, NoneOfAreNotBiggerThan)
 {
     int A[]{ 1, 1, 1, 1, 10, 1, 1, 1, 1 };
     bool result;
+
     result = graal::none_of( std::begin(A), std::end(A), sizeof(A[0]), INT_bigg_than );
     ASSERT_FALSE( result );
 }
@@ -285,8 +272,11 @@ TEST(IntRange, AllAreEqualType1)
 {
     int A[]{ 'a', 'b', 'c', 'd' };
     int A_E[]{ 'a', 'b', 'c', 'd' };
+
     bool result;
-    result = graal::equal(std::begin(A), std::end(A), std::begin(A_E), sizeof(A[0]), INT_equal_to );
+    result = graal::equal( std::begin(A), std::end(A),
+                           std::begin(A_E), sizeof(A[0]),
+                           INT_equal_to );
     ASSERT_TRUE( result );
 }
 
@@ -294,8 +284,11 @@ TEST(IntRange, AllAreNotEqualType1)
 {
     int A[]{ 'a', 'b', 'c', 'd' };
     int A_E[]{ 'a', 'f', 'c', 'd' };
+
     bool result;
-    result = graal::equal(std::begin(A), std::end(A), std::begin(A_E), sizeof(A[0]), INT_equal_to );
+    result = graal::equal( std::begin(A), std::end(A),
+                           std::begin(A_E), sizeof(A[0]),
+                           INT_equal_to );
     ASSERT_FALSE( result );
 }
 
@@ -303,8 +296,11 @@ TEST(IntRange, PartAreEqualType1)
 {
     int A[]{ 'a', 'c', 'b', 'd', 'g' };
     int A_E[]{ 'l', 'c', 'b', 'd', 'a' };
+
     bool result;
-    result = graal::equal(std::begin(A)+1, std::begin(A)+4, std::begin(A_E)+1, sizeof(A[0]), INT_equal_to );
+    result = graal::equal( std::begin(A)+1, std::begin(A)+4,
+                           std::begin(A_E)+1, sizeof(A[0]),
+                           INT_equal_to );
     ASSERT_TRUE( result );
 }
 
@@ -312,8 +308,11 @@ TEST(IntRange, PartAreNotEqualType1)
 {
     int A[]{ 'a', 'c', 'b', 'd', 'g' };
     int A_E[]{ 'l', 'c', 'a', 'd', 'p' };
+
     bool result;
-    result = graal::equal(std::begin(A)+1, std::begin(A)+4, std::begin(A_E)+1, sizeof(A[0]), INT_equal_to );
+    result = graal::equal( std::begin(A)+1, std::begin(A)+4,
+                           std::begin(A_E)+1, sizeof(A[0]),
+                           INT_equal_to );
     ASSERT_FALSE( result );
 }
 /*}}}*/
@@ -322,6 +321,7 @@ TEST(IntRange, AllAreEqualType2)
 {
     int A[]{ 'a', 'c', 'b', 'd', 'g' };
     int A_E[]{ 'a', 'c', 'b', 'd', 'g' };
+
     bool result;
     result = graal::equal( std::begin(A),
                            std::end(A),
@@ -336,6 +336,7 @@ TEST(IntRange, AllAreNotEqualType2)
 {
     int A[]{ 'a', 'c', 'b', 'd', 'g' };
     int A_E[]{ 'a', 'h', 'b', 'd', 'g' };
+
     bool result;
     result = graal::equal( std::begin(A),
                            std::end(A),
@@ -350,6 +351,7 @@ TEST(IntRange, PartAreEqualType2)
 {
     int A[]{ 'a', 'c', 'b', 'd', 'e', 'g' };
     int A_E[]{ 'l', 'c', 'b', 'd', 'e', 'h' };
+
     bool result;
     result = graal::equal( std::begin(A)+1,
                            std::begin(A)+5,
@@ -364,6 +366,7 @@ TEST(IntRange, PartAreNotEqualType2)
 {
     int A[]{ 'a', 'c', 'b', 'd', 'e', 'g' };
     int A_E[]{ 'l', 'c', 'b', 'd', 'f', 'h' };
+
     bool result;
     result = graal::equal( std::begin(A)+1,
                            std::begin(A)+5,
@@ -377,8 +380,8 @@ TEST(IntRange, PartAreNotEqualType2)
 /* IntRange -> unique() tests {{{ */
 TEST(IntRange, UniqueAllAre)
 {
-    int A[]{ 1, 1, 1, 1, 1, 1, 2 };
-    int A_E[]{ 1, 2 };
+    int A[]{ 1, 10, 11, 20, 21, 30, 31 };
+    int A_E[]{ 1, 10, 11, 20, 21, 30, 31 };
 
     int * result;
     result = static_cast< int * >(
@@ -430,7 +433,7 @@ TEST(IntRange, UniqueOneIs)
 
 TEST(IntRange, UniqueNoneIs)
 {
-    int A[]{ 1, 2, 5, 2, 5, 1, 9, 9 };
+    int A[]{ 1, 2, 5, 2, 5, 1, 9, 9, 5, 2 };
     int A_E[]{ 1, 2, 5, 9 };
 
     int * result;
@@ -452,43 +455,51 @@ TEST(IntRange, PartitionAllAreTrue)
     int A[]{ 2, 3, 4, 5, 6, 7 };
     int A_E[]{ 2, 3, 4, 5, 6, 7 };
 
-    auto result = graal::partition( std::begin(A), std::end(A), sizeof(A[0]), INT_bigg_than );
-    bool alpha = result == std::end(A);
-    ASSERT_TRUE( std::equal( std::begin(A), std::end(A), std::begin(A_E) ) && alpha );
+    int * result;
+    result = static_cast< int * >(
+             graal::partition( std::begin(A), std::end(A),
+                               sizeof(A[0]), INT_bigg_than )
+             );
+    ASSERT_TRUE( std::equal( std::begin(A), result, std::begin(A_E) ) );
 }
 
 TEST(IntRange, PartitionSomeAreTrue)
 {
     int A[]{ 1, 2, 3, 5, 1, 4 };
-    int A_E[]{ 2, 3, 5, 4, 1, 1 };
+    int A_E[]{ 2, 3, 5, 4 };
 
-    auto result = graal::partition( std::begin(A), std::end(A), sizeof(A[0]), INT_bigg_than );
-    
-    std::cout << *((const int*) result) << std::endl;
-    
-    bool alpha = result == std::begin(A)+4;
-    ASSERT_TRUE( std::equal( std::begin(A), std::end(A), std::begin(A_E) ) && alpha );
+    int * result;
+    result = static_cast< int * >(
+             graal::partition( std::begin(A), std::end(A),
+                               sizeof(A[0]), INT_bigg_than )
+             );
+    ASSERT_TRUE( std::equal( std::begin(A), result, std::begin(A_E) ) );
 }
 
 TEST(IntRange, PartitionOneIsTrue)
 {
     int A[]{ 1, 1, 1, 1, 1, 1, 5 };
-    int A_E[]{ 5, 1, 1, 1, 1, 1, 1 };
+    int A_E[]{ 5 };
 
-    auto result = graal::partition( std::begin(A), std::end(A), sizeof(A[0]), INT_bigg_than );
-    bool alpha = result == std::begin(A)+1;
-    ASSERT_TRUE( std::equal( std::begin(A), std::end(A), std::begin(A_E) ) && alpha );
+    int * result;
+    result = static_cast< int * >(
+             graal::partition( std::begin(A), std::end(A),
+                               sizeof(A[0]), INT_bigg_than )
+             );
+    ASSERT_TRUE( std::equal( std::begin(A), result, std::begin(A_E) ) );
 }
 
 TEST(IntRange, PartitionNoneIsTrue)
 {
     int A[]{ 1, 1, 0, 1, 0, 1, 1 };
-    int A_E[]{ 1, 1, 0, 1, 0, 1, 1 };
+    int A_E[]{ 0 };
 
-    auto result = graal::partition( std::begin(A), std::end(A), sizeof(A[0]), INT_bigg_than );
-
-    bool alpha = result == std::begin(A);
-    ASSERT_TRUE( std::equal( std::begin(A), std::end(A), std::begin(A_E) ) && alpha );
+    int * result;
+    result = static_cast< int * >(
+             graal::partition( std::begin(A), std::end(A),
+                               sizeof(A[0]), INT_bigg_than )
+             );
+    ASSERT_TRUE( std::equal( std::begin(A), result, std::begin(A_E) ) );
 }
 /*}}}*/
 /* IntRange -> sort() tests {{{*/
@@ -517,8 +528,8 @@ TEST(IntRange, BasicSort)
 }
 
 TEST(IntRange, DuplicatedMembersSort){
-    int A[]{ 'g', 'f', 'e', 'd', 'a', 'a', 'a' };
-    int A_O[]{ 'a', 'a', 'a', 'd', 'e', 'f', 'g' };
+    int A[]{ 7, 6, 5, 4, 1, 1, 1 };
+    int A_O[]{ 1, 1, 1, 4, 5, 6, 7 };
 
     using_lib::qsort( 
         std::begin(A), 
@@ -543,7 +554,7 @@ bool CHAR_bigg_than( const void *c ){
     return *c_c > 'a';
 };
 
-/* Equalite function for char */
+/* Equality function for char */
 bool CHAR_equal_to( const void *a, const void *b )
 { 
     const char *a_ = static_cast< const char * >(a);
@@ -552,20 +563,12 @@ bool CHAR_equal_to( const void *a, const void *b )
     return *a_ == *b_;
 };
 
-/* Sort function for char */
-int CHAR_sort_comp( const void *a, const void *b ){
-    /* simple conversion to char, so we can work on */
-    const char * a_ = static_cast< const char * >(a);
-    const char * b_ = static_cast< const char * >(b);
+/* Boolean sort for char */
+bool CHAR_sort_comp( const void *a, const void *b ){
+    const char * m_a = static_cast< const char * >(a);
+    const char * m_b = static_cast< const char * >(b);
 
-    /* conditionals following the qsort() implementation */
-    if( *a_ < *b_ ){
-        return -1;
-    } else if( *a_ > *b_ ){
-        return 1;
-    } else {
-        return 0;
-    }
+    return *m_a < *m_b;
 }
 
 /* CharRange -> min() tests {{{*/
@@ -676,6 +679,7 @@ TEST(CharRange, CloneEntireArray)
 
     char *result = static_cast< char *>(graal::clone( std::begin(A), std::end(A), sizeof(A[0]) ));
     ASSERT_TRUE( std::equal( std::begin(A), std::end(A), result ) );
+    delete [] result;
 }
 
 TEST(CharRange, ClonePartOfArray)
@@ -684,8 +688,8 @@ TEST(CharRange, ClonePartOfArray)
 
     char *result = static_cast< char *>(graal::clone( std::begin(A)+3, std::end(A), sizeof(A[0]) ));
     ASSERT_TRUE( std::equal( std::begin(A)+3, std::end(A), result ) );
+    delete [] result;
 }
-
 /*}}}*/
 /* CharRange -> find_if() tests {{{*/
 TEST(CharRange, LotsAreBiggerThan)
@@ -745,19 +749,18 @@ TEST(CharRange, AllOfAreBiggerThan)
     char A[]{ 'b', 'c', 'd', 'e', 'f', 'g' };
     bool result;
 
-    auto big_than_a = [](const void * c){
-        return *(static_cast< const char * >(c)) > 'a';
-    };
-
-    result = graal::all_of( std::begin(A), std::end(A), sizeof(A[0]), big_than_a );
+    result = graal::all_of( std::begin(A), std::end(A),
+                            sizeof(A[0]), CHAR_bigg_than );
     ASSERT_TRUE( result );
 }
+
 TEST(CharRange, AllOfAreNotBiggerThan)
 {
     char A[]{ 'b', 'a', 'd', 'e', 'f', 'g' };
     bool result;
 
-    result = graal::all_of( std::begin(A), std::end(A), sizeof(A[0]), CHAR_bigg_than );
+    result = graal::all_of( std::begin(A), std::end(A),
+                            sizeof(A[0]), CHAR_bigg_than );
     ASSERT_FALSE( result );
 }
 /*}}}*/
@@ -766,8 +769,18 @@ TEST(CharRange, AnyOfAreBiggerThan)
 {
     char A[]{ 'a', 'a', 'a', 'a', 'a', 'b', 'a', };
     bool result;
+
     result = graal::any_of( std::begin(A), std::end(A), sizeof(A[0]), CHAR_bigg_than );
     ASSERT_TRUE( result );
+}
+
+TEST(CharRange, AnyOfAreNotBiggerThan)
+{
+    char A[]{ 'a', 'a', 'a', 'a', 'a', 'a', 'a', };
+    bool result;
+
+    result = graal::any_of( std::begin(A), std::end(A), sizeof(A[0]), CHAR_bigg_than );
+    ASSERT_FALSE( result );
 }
 /*}}}*/
 /* CharRange -> none_of() tests {{{*/
@@ -775,8 +788,18 @@ TEST(CharRange, NoneOfAreBiggerThan)
 {
     char A[]{ 'a', 'a', 'a', 'a', 'a', 'a', 'a', };
     bool result;
+
     result = graal::none_of( std::begin(A), std::end(A), sizeof(A[0]), CHAR_bigg_than );
     ASSERT_TRUE( result );
+}
+
+TEST(CharRange, NoneOfAreNotBiggerThan)
+{
+    char A[]{ 'a', 'a', 'a', 'z', 'a', 'a', 'a', };
+    bool result;
+
+    result = graal::none_of( std::begin(A), std::end(A), sizeof(A[0]), CHAR_bigg_than );
+    ASSERT_FALSE( result );
 }
 /*}}}*/
 /* CharRange -> type1 equal() tests {{{*/
@@ -784,8 +807,11 @@ TEST(CharRange, AllAreEqualType1)
 {
     char A[]{ 'a', 'b', 'c', 'd' };
     char A_E[]{ 'a', 'b', 'c', 'd' };
+
     bool result;
-    result = graal::equal(std::begin(A), std::end(A), std::begin(A_E), sizeof(A[0]), CHAR_equal_to );
+    result = graal::equal( std::begin(A), std::end(A),
+                           std::begin(A_E), sizeof(A[0]),
+                           CHAR_equal_to );
     ASSERT_TRUE( result );
 }
 
@@ -793,8 +819,11 @@ TEST(CharRange, AllAreNotEqualType1)
 {
     char A[]{ 'a', 'b', 'c', 'd' };
     char A_E[]{ 'a', 'f', 'c', 'd' };
+
     bool result;
-    result = graal::equal(std::begin(A), std::end(A), std::begin(A_E), sizeof(A[0]), CHAR_equal_to );
+    result = graal::equal( std::begin(A), std::end(A),
+                           std::begin(A_E), sizeof(A[0]),
+                           CHAR_equal_to );
     ASSERT_FALSE( result );
 }
 
@@ -803,7 +832,10 @@ TEST(CharRange, PartAreEqualType1)
     char A[]{ 'a', 'c', 'b', 'd', 'g' };
     char A_E[]{ 'l', 'c', 'b', 'd', 'a' };
     bool result;
-    result = graal::equal(std::begin(A)+1, std::begin(A)+4, std::begin(A_E)+1, sizeof(A[0]), CHAR_equal_to );
+
+    result = graal::equal( std::begin(A)+1, std::begin(A)+4,
+                           std::begin(A_E)+1, sizeof(A[0]),
+                           CHAR_equal_to );
     ASSERT_TRUE( result );
 }
 
@@ -811,8 +843,11 @@ TEST(CharRange, PartAreNotEqualType1)
 {
     char A[]{ 'a', 'c', 'b', 'd', 'g' };
     char A_E[]{ 'l', 'c', 'a', 'd', 'p' };
+
     bool result;
-    result = graal::equal(std::begin(A)+1, std::begin(A)+4, std::begin(A_E)+1, sizeof(A[0]), CHAR_equal_to );
+    result = graal::equal( std::begin(A)+1, std::begin(A)+4,
+                           std::begin(A_E)+1, sizeof(A[0]),
+                           CHAR_equal_to );
     ASSERT_FALSE( result );
 }
 /*}}}*/
@@ -821,6 +856,7 @@ TEST(CharRange, AllAreEqualType2)
 {
     char A[]{ 'a', 'c', 'b', 'd', 'g' };
     char A_E[]{ 'a', 'c', 'b', 'd', 'g' };
+
     bool result;
     result = graal::equal( std::begin(A),
                            std::end(A),
@@ -835,6 +871,7 @@ TEST(CharRange, AllAreNotEqualType2)
 {
     char A[]{ 'a', 'c', 'b', 'd', 'g' };
     char A_E[]{ 'a', 'h', 'b', 'd', 'g' };
+
     bool result;
     result = graal::equal( std::begin(A),
                            std::end(A),
@@ -849,6 +886,7 @@ TEST(CharRange, PartAreEqualType2)
 {
     char A[]{ 'a', 'c', 'b', 'd', 'e', 'g' };
     char A_E[]{ 'l', 'c', 'b', 'd', 'e', 'h' };
+
     bool result;
     result = graal::equal( std::begin(A)+1,
                            std::begin(A)+5,
@@ -863,6 +901,7 @@ TEST(CharRange, PartAreNotEqualType2)
 {
     char A[]{ 'a', 'c', 'b', 'd', 'e', 'g' };
     char A_E[]{ 'l', 'c', 'b', 'd', 'f', 'h' };
+
     bool result;
     result = graal::equal( std::begin(A)+1,
                            std::begin(A)+5,
@@ -876,8 +915,8 @@ TEST(CharRange, PartAreNotEqualType2)
 /* CharRange -> unique() tests {{{ */
 TEST(CharRange, UniqueAllAre)
 {
-    char A[]{ 'a', 'a', 'a', 'a', 'a', 'a', 'b' };
-    char A_E[]{ 'a', 'b' };
+    char A[]{ 'a', 'c', 'd', 'b', 'e' };
+    char A_E[]{ 'a', 'c', 'd', 'b', 'e' };
 
     char * result;
     result = static_cast< char * >(
@@ -894,8 +933,8 @@ TEST(CharRange, UniqueAllAre)
 
 TEST(CharRange, UniqueManyAre)
 {
-    char A[]{ 1, 2, 5, 4, 5, 3, 3 };
-    char A_E[]{ 1, 2, 5, 4, 3 };
+    char A[]{ 'a', 'b', 'e', 'd', 'e', 'c', 'c' };
+    char A_E[]{ 'a', 'b', 'e', 'd', 'c' };
 
     char * result;
     result = static_cast< char * >(
@@ -911,8 +950,8 @@ TEST(CharRange, UniqueManyAre)
 
 TEST(CharRange, UniqueOneIs)
 {
-    char A[]{ 1, 5, 3, 3, 5, 10, 1 };
-    char A_E[]{ 1, 5, 3, 10 };
+    char A[]{ 'a', 'f', 'c', 'c', 'f', 'k', 'a' };
+    char A_E[]{ 'a', 'f', 'c', 'k' };
 
     char * result;
     result = static_cast< char * >(
@@ -929,8 +968,8 @@ TEST(CharRange, UniqueOneIs)
 
 TEST(CharRange, UniqueNoneIs)
 {
-    char A[]{ 1, 2, 5, 2, 5, 1, 9, 9 };
-    char A_E[]{ 1, 2, 5, 9 };
+    char A[]{ 'a', 'b', 'h', 'b', 'h', 'a', 'j', 'j' };
+    char A_E[]{ 'a', 'b', 'h', 'j' };
 
     char * result;
     result = static_cast< char * >(
@@ -951,39 +990,51 @@ TEST(CharRange, PartitionAllAreTrue)
     char A[]{ 'b', 'c', 'd', 'e', 'f' };
     char A_E[]{ 'b', 'c', 'd', 'e', 'f' };
 
-    auto result = graal::partition( std::begin(A), std::end(A), sizeof(A[0]), CHAR_bigg_than );
-    bool alpha = result == std::end(A);
-    ASSERT_TRUE( std::equal( std::begin(A), std::end(A), std::begin(A_E) ) && alpha );
+    char * result;
+    result = static_cast< char * >(
+             graal::partition( std::begin(A), std::end(A),
+                               sizeof(A[0]), CHAR_bigg_than )
+             );
+    ASSERT_TRUE( std::equal( std::begin(A), result, std::begin(A_E) ) );
 }
 
 TEST(CharRange, PartitionSomeAreTrue)
 {
     char A[]{ 'a', 'c', 'd', 'a', 'f' };
-    char A_E[]{ 'c', 'd', 'f', 'a', 'a' };
+    char A_E[]{ 'c', 'd', 'f' };
 
-    auto result = graal::partition( std::begin(A), std::end(A), sizeof(A[0]), CHAR_bigg_than );
-    bool alpha = result == std::begin(A)+3;
-    ASSERT_TRUE( std::equal( std::begin(A), std::end(A), std::begin(A_E) ) && alpha );
+    char * result;
+    result = static_cast< char * >(
+             graal::partition( std::begin(A), std::end(A),
+                               sizeof(A[0]), CHAR_bigg_than )
+             );
+    ASSERT_TRUE( std::equal( std::begin(A), result, std::begin(A_E) ) );
 }
 
 TEST(CharRange, PartitionOneIsTrue)
 {
     char A[]{ 'a', 'a', 'a', 'a', 'a', 'a', 'f' };
-    char A_E[]{ 'f', 'a', 'a', 'a', 'a', 'a', 'a' };
+    char A_E[]{ 'f' };
 
-    auto result = graal::partition( std::begin(A), std::end(A), sizeof(A[0]), CHAR_bigg_than );
-    bool alpha = result == std::begin(A)+1;
-    ASSERT_TRUE( std::equal( std::begin(A), std::end(A), std::begin(A_E) ) && alpha );
+    char * result;
+    result = static_cast< char * >(
+             graal::partition( std::begin(A), std::end(A),
+                               sizeof(A[0]), CHAR_bigg_than )
+             );
+    ASSERT_TRUE( std::equal( std::begin(A), result, std::begin(A_E) ) );
 }
 
 TEST(CharRange, PartitionNoneIsTrue)
 {
     char A[]{ 'a', 'a', 'a', 'a', 'a', 'a', 'a', 'a' };
-    char A_E[]{ 'a', 'a', 'a', 'a', 'a', 'a', 'a', 'a' };
+    char A_E[]{ 0 };
 
-    auto result = graal::partition( std::begin(A), std::end(A), sizeof(A[0]), CHAR_bigg_than );
-    bool alpha = result == std::begin(A);
-    ASSERT_TRUE( std::equal( std::begin(A), std::end(A), std::begin(A_E) ) && alpha );
+    char * result;
+    result = static_cast< char * >(
+             graal::partition( std::begin(A), std::end(A),
+                               sizeof(A[0]), CHAR_bigg_than )
+             );
+    ASSERT_TRUE( std::equal( std::begin(A), result, std::begin(A_E) ) );
 }
 /*}}}*/
 /* CharRange -> sort() tests {{{*/
@@ -1028,7 +1079,7 @@ bool STR_bigg_than( const void *c ){
     return *c_c > "aa";
 };
 
-/* Equalite function for string */
+/* Equality function for string */
 bool STR_equal_to( const void *a, const void *b )
 { 
     const std::string *a_ = static_cast< const std::string * >(a);
@@ -1037,18 +1088,14 @@ bool STR_equal_to( const void *a, const void *b )
     return *a_ == *b_;
 };
 
-/* Sort function for string */
-int STR_sort_comp( const void *a, const void *b ){
-    const std::string * a_ = static_cast< const std::string * >(a);
-    const std::string * b_ = static_cast< const std::string * >(b);
-    if( *a_ < *b_ ){
-        return -1;
-    } else if( *a_ > *b_ ){
-        return 1;
-    } else {
-        return 0;
-    }
+/* Boolean sort for std::string */
+bool STR_sort_comp( const void *a, const void *b ){
+    const std::string * m_a = static_cast< const std::string * >(a);
+    const std::string * m_b = static_cast< const std::string * >(b);
+
+    return *m_a < *m_b;
 }
+
 /* StringRange -> min() tests {{{*/
 TEST(StringRange, MinBasic)
 {
@@ -1073,444 +1120,235 @@ TEST(StringRange, MinFirstOcurrence)
     ASSERT_EQ( result , std::begin(A) );
 }
 /*}}}*/
-/* StringRange -> reverse() tests {{{*/
-// TEST(StringRange, ReverseEntireArrayEven)
-// {
-//     std::string A[]{ "ai", "br", "ca", "deu", "eu", "foi" };
-//     // std::string result[]{ "foi", "eu", "deu", "ca", "br", "ai" };
+/* StringRange -> find_if() tests {{{*/
+TEST(StringRange, FindIfLotsAreBiggerThan)
+{
+    std::string A[]{ "a", "cc", "lll", "bb", "aa" };
+    auto result = graal::find_if( std::begin(A), std::end(A),
+                                  sizeof(A[0]), STR_bigg_than );
+    ASSERT_EQ( std::begin(A)+1, result );
+}
 
-//     graal::reverse( std::begin(A), std::end(A), sizeof(std::string) );
-    
-//     // ASSERT_TRUE( std::equal( std::begin(A), std::end(A), std::begin(result) ) );
-// }
+TEST(StringRange, FindIfOneIsBiggerThan)
+{
+    std::string A[]{ "a", "aa", "a", "bb", "aa" };
+    auto result = graal::find_if( std::begin(A), std::end(A),
+                                  sizeof(A[0]), STR_bigg_than );
+    ASSERT_EQ( std::begin(A)+3, result );
+}
 
-// TEST(StringRange, ReverseEntireArrayOdd)
-// {
-//     std::string A[]{ "be", "ce", "de", "efe", "ge" };
-//     std::string A_E[]{ "ge", "efe", "de", "ce", "be" };
-
-//     graal::reverse( std::begin(A), std::end(A), sizeof(A[0]) );
-//     ASSERT_TRUE( std::equal( std::begin(A), std::end(A), std::begin(A_E) ) );
-// }
-
-// TEST(StringRange, ReversePartOfArrayEven)
-// {
-//     std::string A[]{ "aa", "bb", "cc", "dd", "ee", "fe", "gg", "ho" };
-//     std::string A_E[]{ "aa", "bb", "fe", "ee", "dd", "cc", "gg", "ho" };
-
-//     /*
-//     std::cout << "before:\t";
-//     for( auto &i : A ) std::cout << i << " ";
-//     std::cout << std::endl;
-//     */
-
-//     graal::reverse( std::begin(A)+2, std::begin(A)+6, sizeof(A[0]) );
-
-//     /*
-//     std::cout << "after:\t";
-//     for( auto &i : A ) std::cout << i << " ";
-//     std::cout << std::endl;
-//     */
-
-//     ASSERT_TRUE( std::equal( std::begin(A), std::end(A), std::begin(A_E) ) );
-// }
-
-// TEST(StringRange, ReversePartOfArrayOdd)
-// {
-//     std::string A[]{ "aa", "ff", "ee", "dd", "cc", "bb", "gg" };
-//     std::string A_E[]{ "aa", "bb", "cc", "dd", "ee", "ff", "gg" };
-
-//     graal::reverse( std::begin(A)+1, std::begin(A)+6, sizeof(A[0]) );
-//     ASSERT_TRUE( std::equal( std::begin(A), std::end(A), std::begin(A_E) ) );
-// }
+TEST(StringRange, FindIfNoneIsBiggerThan)
+{
+    std::string A[]{ "a", "aa", "a", "aa" };
+    auto result = graal::find_if( std::begin(A), std::end(A),
+                                  sizeof(A[0]), STR_bigg_than );
+    ASSERT_EQ( std::end(A), result );
+}
 /*}}}*/
-/* StringRange -> copy() tests {{{*/
-// TEST(StringRange, CopyEntireArray)
-// {
-//     std::string A[]{ "algo", "besta", "dd", "ee", "gg" };
-//     std::string A_E[]{ "aa", "aa", "aa", "aa", "aa" };
+/* StringRange -> find() tests {{{*/
+TEST(StringRange, FindLotsAreEqual)
+{
+    std::string A[]{ "aa", "bb", "kk", "kk", "kk" };
+    std::string A_E[]{ "kk" };
 
-//     graal::copy( std::begin(A), std::end(A), std::begin(A_E), sizeof(A[0]) );
-//     ASSERT_TRUE( std::equal( std::begin(A), std::end(A), std::begin(A_E) ) );
-// }
+    auto result = graal::find( std::begin(A), std::end(A), sizeof(A[0]),
+                               std::begin(A_E), STR_equal_to );
+    ASSERT_EQ( std::begin(A)+2, result );
+}
 
-// TEST(StringRange, CopyPartOfArray)
-// {
-//     std::string A[]{ "aa", "bb", "cc", "dd", "ee" };
-//     std::string A_E[]{ "aa", "bb", "aa", "aa", "aa"};
+TEST(StringRange, FindThereIsOneEqual)
+{
+    std::string A[]{ "bb", "aa", "qq", "ll", "kkkk" };
+    std::string A_E[]{ "kkkk" };
 
-//     graal::copy( std::begin(A)+2, std::end(A), std::begin(A_E)+2, sizeof(A[0]) );
-//     ASSERT_TRUE( std::equal( std::begin(A), std::end(A), std::begin(A_E) ) );
-// }
+    auto result = graal::find( std::begin(A), std::end(A), sizeof(A[0]),
+                               std::begin(A_E), STR_equal_to );
+    ASSERT_EQ( std::begin(A)+4, result );
+}
 
-// TEST(StringRange, CopyFinalOfArray)
-// {
-//     std::string A[]{ "aa", "bb", "cc", "dd", "gg" };
-//     std::string A_E[]{ "aa", "bb", "cc", "aa", "aa" };
+TEST(StringRange, NoneIsEqual)
+{
+    std::string A[]{ "aa", "bb", "cc", "dd", "ee" };
+    std::string A_E[]{ "kk" };
 
-//     graal::copy( std::begin(A)+3, std::end(A), std::begin(A_E)+3, sizeof(A[0]) );
-//     ASSERT_TRUE( std::equal( std::begin(A), std::end(A), std::begin(A_E) ) );
-// }
+    auto result = graal::find( std::begin(A), std::end(A), sizeof(A[0]),
+                               std::begin(A_E), STR_equal_to );
+    ASSERT_EQ( std::end(A), result );
+}
+/*}}}*/
+/* StringRange -> all_of() tests {{{*/
+TEST(StringRange, AllOfAreBiggerThan)
+{
+    std::string A[]{ "ab", "ac", "ad", "aab", "ae" };
+    bool result;
 
-// TEST(StringRange, CopyUnaryArray)
-// {
-//     std::string A[]{ "zebra" };
-//     std::string A_E[]{ "cavalo" };
+    result = graal::all_of( std::begin(A), std::end(A),
+                            sizeof(A[0]), STR_bigg_than );
+    ASSERT_TRUE( result );
+}
 
-//     graal::copy( std::begin(A), std::end(A), std::begin(A_E), sizeof(A[0]) );
-//     ASSERT_TRUE( std::equal( std::begin(A), std::end(A), std::begin(A_E) ) );
-// }
-// /*}}}*/
-// /* StringRange -> clone() tests {{{*/
-// TEST(StringRange, CloneEntireArray)
-// {
-//     std::string A[]{ "aa", "bb", "cc", "dd", "ee" };
+TEST(StringRange, AllOfAreNotBiggerThan)
+{
+    std::string A[]{ "zz", "yy", "cc", "xx", "aa", "ww", "kkk" };
+    bool result;
 
-//     std::string *result = static_cast< std::string *>(graal::clone( std::begin(A), std::end(A), sizeof(A[0]) ));
-//     ASSERT_TRUE( std::equal( std::begin(A), std::end(A), result ) );
-// }
+    result = graal::all_of( std::begin(A), std::end(A),
+                            sizeof(A[0]), STR_bigg_than );
+    ASSERT_FALSE( result );
+}
+/*}}}*/
+/* StringRange -> any_of() tests {{{*/
+TEST(StringRange, AnyOfAreBiggerThan)
+{
+    std::string A[]{ "aa", "aa", "aa", "aa", "bar", "aa", "aa" };
+    bool result;
 
-// TEST(StringRange, ClonePartOfArray)
-// {
-//     std::string A[]{ "kk", "ll", "mm", "nn", "oo", "pp" };
+    result = graal::any_of( std::begin(A), std::end(A), sizeof(A[0]), STR_bigg_than );
+    ASSERT_TRUE( result );
+}
 
-//     std::string *result = static_cast< std::string *>(graal::clone( std::begin(A)+3, std::end(A), sizeof(A[0]) ));
-//     ASSERT_TRUE( std::equal( std::begin(A)+3, std::end(A), result ) );
-// }
-// /*}}}*/
-// /* StringRange -> find_if() tests {{{*/
-// TEST(StringRange, FindIfLotsAreBiggerThan)
-// {
-//     std::string A[]{ "a", "cc", "lll", "bb", "aa" };
-//     auto result = graal::find_if( std::begin(A), std::end(A),
-//                                   sizeof(A[0]), STR_bigg_than );
-//     ASSERT_EQ( std::begin(A)+1, result );
-// }
+TEST(StringRange, AnyOfAreNotBiggerThan)
+{
+    std::string A[]{ "aa", "aa", "aa", "aa", "aa", "aa", "aa" };
+    bool result;
 
-// TEST(StringRange, FindIfOneIsBiggerThan)
-// {
-//     std::string A[]{ "a", "aa", "a", "bb", "aa" };
-//     auto result = graal::find_if( std::begin(A), std::end(A),
-//                                   sizeof(A[0]), STR_bigg_than );
-//     ASSERT_EQ( std::begin(A)+3, result );
-// }
+    result = graal::any_of( std::begin(A), std::end(A), sizeof(A[0]), STR_bigg_than );
+    ASSERT_FALSE( result );
+}
+/*}}}*/
+/* StringRange -> none_of() tests {{{*/
+TEST(StringRange, NoneOfAreBiggerThan)
+{
+    std::string A[]{ "aa", "aa", "aa", "aa", "aa" };
+    bool result;
 
-// TEST(StringRange, FindIfNoneIsBiggerThan)
-// {
-//     std::string A[]{ "a", "aa", "a", "aa" };
-//     auto result = graal::find_if( std::begin(A), std::end(A),
-//                                   sizeof(A[0]), STR_bigg_than );
-//     ASSERT_EQ( std::end(A), result );
-// }
-// /*}}}*/
-// /* StringRange -> find() tests {{{*/
-// TEST(StringRange, FindLotsAreEqual)
-// {
-//     std::string A[]{ "aa", "bb", "kk", "kk", "kk" };
-//     std::string A_E[]{ "kk" };
-//     auto result = graal::find( std::begin(A), std::end(A), sizeof(A[0]),
-//                           std::begin(A_E), STR_equal_to );
-//     ASSERT_EQ( std::begin(A)+2, result );
-// }
+    result = graal::none_of( std::begin(A), std::end(A), sizeof(A[0]), STR_bigg_than );
+    ASSERT_TRUE( result );
+}
 
-// TEST(StringRange, FindThereIsOneEqual)
-// {
-//     std::string A[]{ "bb", "aa", "qq", "ll", "kkkk" };
-//     std::string A_E[]{ "kkkk" };
-//     auto result = graal::find( std::begin(A), std::end(A), sizeof(A[0]),
-//                           std::begin(A_E), STR_equal_to );
-//     ASSERT_EQ( std::begin(A)+4, result );
-// }
+TEST(StringRange, NoneOfAreNotBiggerThan)
+{
+    std::string A[]{ "aa", "zz", "aa", "aa", "aa" };
+    bool result;
 
-// TEST(StringRange, NoneIsEqual)
-// {
-//     std::string A[]{ "aa", "bb", "cc", "dd", "ee" };
-//     std::string A_E[]{ "kk" };
-//     auto result = graal::find( std::begin(A), std::end(A), sizeof(A[0]),
-//                           std::begin(A_E), STR_equal_to );
-//     ASSERT_EQ( std::end(A), result );
-// }
-// /*}}}*/
-// /* StringRange -> all_of() tests {{{*/
-// TEST(StringRange, AllOfAreBiggerThan)
-// {
-//     std::string A[]{ "ab", "ac", "ad", "aab", "ae" };
-//     bool result;
+    result = graal::none_of( std::begin(A), std::end(A), sizeof(A[0]), STR_bigg_than );
+    ASSERT_FALSE( result );
+}
+/*}}}*/
+/* StringRange -> type1 equal() tests {{{*/
+TEST(StringRange, AllAreEqualType1)
+{
+    std::string A[]{ "aa", "bb", "cc", "dd" };
+    std::string A_E[]{ "aa", "bb", "cc", "dd" };
 
-//     result = graal::all_of( std::begin(A), std::end(A), sizeof(A[0]), STR_bigg_than );
-//     ASSERT_TRUE( result );
-// }
+    bool result;
+    result = graal::equal( std::begin(A), std::end(A),
+                           std::begin(A_E), sizeof(A[0]),
+                           STR_equal_to );
+    ASSERT_TRUE( result );
+}
 
-// TEST(StringRange, AllOfAreNotBiggerThan)
-// {
-//     std::string A[]{ "zz", "yy", "cc", "xx", "aa", "ww", "kkk" };
-//     bool result;
+TEST(StringRange, AllAreNotEqualType1)
+{
+    std::string A[]{ "aa", "bb", "cc", "dd" };
+    std::string A_E[]{ "aa", "ff", "cc", "dd" };
 
-//     result = graal::all_of( std::begin(A), std::end(A),
-//                             sizeof(A[0]), STR_bigg_than );
-//     ASSERT_FALSE( result );
-// }
-// /*}}}*/
-// /* StringRange -> any_of() tests {{{*/
-// TEST(StringRange, AnyOfAreBiggerThan)
-// {
-//     std::string A[]{ "aa", "aa", "aa", "aa", "bar", "aa", "aa" };
-//     bool result;
-//     result = graal::any_of( std::begin(A), std::end(A), sizeof(A[0]), STR_bigg_than );
-//     ASSERT_TRUE( result );
-// }
+    bool result;
+    result = graal::equal( std::begin(A), std::end(A),
+                           std::begin(A_E), sizeof(A[0]),
+                           STR_equal_to );
+    ASSERT_FALSE( result );
+}
 
-// TEST(StringRange, AnyOfAreNotBiggerThan)
-// {
-//     std::string A[]{ "aa", "aa", "aa", "aa", "aa", "aa", "aa" };
-//     bool result;
-//     result = graal::any_of( std::begin(A), std::end(A), sizeof(A[0]), STR_bigg_than );
-//     ASSERT_FALSE( result );
-// }
-// /*}}}*/
-// /* StringRange -> none_of() tests {{{*/
-// TEST(StringRange, NoneOfAreBiggerThan)
-// {
-//     std::string A[]{ "aa", "aa", "aa", "aa", "aa" };
-//     bool result;
-//     result = graal::none_of( std::begin(A), std::end(A), sizeof(A[0]), STR_bigg_than );
-//     ASSERT_TRUE( result );
-// }
+TEST(StringRange, PartAreEqualType1)
+{
+    std::string A[]{ "aa", "cc", "bb", "dd", "gg" };
+    std::string A_E[]{ "ll", "cc", "bb", "dd", "aa" };
 
-// TEST(StringRange, NoneOfAreNotBiggerThan)
-// {
-//     std::string A[]{ "aa", "zz", "aa", "aa", "aa" };
-//     bool result;
-//     result = graal::none_of( std::begin(A), std::end(A), sizeof(A[0]), STR_bigg_than );
-//     ASSERT_FALSE( result );
-// }
-// /*}}}*/
-// /* StringRange -> type1 equal() tests {{{*/
-// TEST(StringRange, AllAreEqualType1)
-// {
-//     std::string A[]{ "aa", "bb", "cc", "dd" };
-//     std::string A_E[]{ "aa", "bb", "cc", "dd" };
-//     bool result;
-//     result = graal::equal(std::begin(A), std::end(A), std::begin(A_E), sizeof(A[0]), STR_equal_to );
-//     ASSERT_TRUE( result );
-// }
+    bool result;
+    result = graal::equal( std::begin(A)+1, std::begin(A)+4,
+                           std::begin(A_E)+1, sizeof(A[0]),
+                           STR_equal_to );
+    ASSERT_TRUE( result );
+}
 
-// TEST(StringRange, AllAreNotEqualType1)
-// {
-//     std::string A[]{ "aa", "bb", "cc", "dd" };
-//     std::string A_E[]{ "aa", "ff", "cc", "dd" };
-//     bool result;
-//     result = graal::equal(std::begin(A), std::end(A), std::begin(A_E), sizeof(A[0]), STR_equal_to );
-//     ASSERT_FALSE( result );
-// }
+TEST(StringRange, PartAreNotEqualType1)
+{
+    std::string A[]{ "aa", "cc", "bb", "dd", "gg" };
+    std::string A_E[]{ "ll", "cc", "aa", "dd", "pp" };
 
-// TEST(StringRange, PartAreEqualType1)
-// {
-//     std::string A[]{ "aa", "cc", "bb", "dd", "gg" };
-//     std::string A_E[]{ "ll", "cc", "bb", "dd", "aa" };
-//     bool result;
-//     result = graal::equal(std::begin(A)+1, std::begin(A)+4, std::begin(A_E)+1, sizeof(A[0]), STR_equal_to );
-//     ASSERT_TRUE( result );
-// }
+    bool result;
+    result = graal::equal( std::begin(A)+1, std::begin(A)+4,
+                           std::begin(A_E)+1, sizeof(A[0]),
+                           STR_equal_to );
+    ASSERT_FALSE( result );
+}
+/*}}}*/
+/* StringRange -> type2 equal() tests {{{*/
+TEST(StringRange, AllAreEqualType2)
+{
+    std::string A[]{ "aa", "cc", "bb", "dd", "gg" };
+    std::string A_E[]{ "aa", "cc", "bb", "dd", "gg" };
 
-// TEST(StringRange, PartAreNotEqualType1)
-// {
-//     std::string A[]{ "aa", "cc", "bb", "dd", "gg" };
-//     std::string A_E[]{ "ll", "cc", "aa", "dd", "pp" };
-//     bool result;
-//     result = graal::equal(std::begin(A)+1, std::begin(A)+4, std::begin(A_E)+1, sizeof(A[0]), STR_equal_to );
-//     ASSERT_FALSE( result );
-// }
-// /*}}}*/
-// /* StringRange -> type2 equal() tests {{{*/
-// TEST(StringRange, AllAreEqualType2)
-// {
-//     std::string A[]{ "aa", "cc", "bb", "dd", "gg" };
-//     std::string A_E[]{ "aa", "cc", "bb", "dd", "gg" };
-//     bool result;
-//     result = graal::equal( std::begin(A),
-//                            std::end(A),
-//                            std::begin(A_E),
-//                            std::end(A_E),
-//                            sizeof(A[0]),
-//                            STR_equal_to );
-//     ASSERT_TRUE( result );
-// }
+    bool result;
+    result = graal::equal( std::begin(A),
+                           std::end(A),
+                           std::begin(A_E),
+                           std::end(A_E),
+                           sizeof(A[0]),
+                           STR_equal_to );
+    ASSERT_TRUE( result );
+}
 
-// TEST(StringRange, AllAreNotEqualType2)
-// {
-//     std::string A[]{ "aa", "cc", "bb", "dd", "gg" };
-//     std::string A_E[]{ "aa", "hh", "bb", "dd", "gg" };
-//     bool result;
-//     result = graal::equal( std::begin(A),
-//                            std::end(A),
-//                            std::begin(A_E),
-//                            std::end(A_E),
-//                            sizeof(A[0]),
-//                            STR_equal_to );
-//     ASSERT_FALSE( result );
-// }
+TEST(StringRange, AllAreNotEqualType2)
+{
+    std::string A[]{ "aa", "cc", "bb", "dd", "gg" };
+    std::string A_E[]{ "aa", "hh", "bb", "dd", "gg" };
 
-// TEST(StringRange, PartAreEqualType2)
-// {
-//     std::string A[]{ "aa", "cc", "bb", "dd", "ee", "gg" };
-//     std::string A_E[]{ "ll", "cc", "bb", "dd", "ee", "hh" };
-//     bool result;
-//     result = graal::equal( std::begin(A)+1,
-//                            std::begin(A)+5,
-//                            std::begin(A_E)+1,
-//                            std::begin(A_E)+5,
-//                            sizeof(A[0]),
-//                            STR_equal_to );
-//     ASSERT_TRUE( result );
-// }
+    bool result;
+    result = graal::equal( std::begin(A),
+                           std::end(A),
+                           std::begin(A_E),
+                           std::end(A_E),
+                           sizeof(A[0]),
+                           STR_equal_to );
+    ASSERT_FALSE( result );
+}
 
-// TEST(StringRange, PartAreNotEqualType2)
-// {
-//     std::string A[]{ "aa", "cc", "bb", "dd", "ee", "gg" };
-//     std::string A_E[]{ "ll", "cc", "bb", "dd", "ff", "hh" };
-//     bool result;
-//     result = graal::equal( std::begin(A)+1,
-//                            std::begin(A)+5,
-//                            std::begin(A_E)+1,
-//                            std::begin(A_E)+5,
-//                            sizeof(A[0]),
-//                            STR_equal_to );
-//     ASSERT_FALSE( result );
-// }
-// /*}}}*/
-// /* StringRange -> unique() tests {{{ */
-// TEST(StringRange, UniqueAllAre)
-// {
-//     std::string A[]{ "aa", "bb", "cc", "dd", "ff" };
-//     std::string A_E[]{ "aa", "bb", "cc", "dd", "ff" };
+TEST(StringRange, PartAreEqualType2)
+{
+    std::string A[]{ "aa", "cc", "bb", "dd", "ee", "gg" };
+    std::string A_E[]{ "ll", "cc", "bb", "dd", "ee", "hh" };
 
-//     auto result = graal::unique( std::begin(A), std::end(A), sizeof(A[0]), STR_equal_to );
-//     bool alpha = result == std::end(A);
-//     ASSERT_TRUE( std::equal( std::begin(A), std::end(A), std::begin(A_E) ) && alpha );
-// }
+    bool result;
+    result = graal::equal( std::begin(A)+1,
+                           std::begin(A)+5,
+                           std::begin(A_E)+1,
+                           std::begin(A_E)+5,
+                           sizeof(A[0]),
+                           STR_equal_to );
+    ASSERT_TRUE( result );
+}
 
-// TEST(StringRange, UniqueManyAre)
-// {
-//     std::string A[]{ "aa", "bb", "ff", "dd", "ff", "cc" };
-//     std::string A_E[]{ "aa", "bb", "ff", "dd", "cc" };
+TEST(StringRange, PartAreNotEqualType2)
+{
+    std::string A[]{ "aa", "cc", "bb", "dd", "ee", "gg" };
+    std::string A_E[]{ "ll", "cc", "bb", "dd", "ff", "hh" };
 
-//     std::string * result;
-//     result = static_cast< std::string * >(
-//             graal::unique( 
-//                 std::begin(A), 
-//                 std::end(A), 
-//                 sizeof(A[0]), 
-//                 STR_equal_to
-//                 )
-//             );
-//     ASSERT_TRUE( std::equal( std::begin(A), result, std::begin(A_E) ) );
-// }
+    bool result;
+    result = graal::equal( std::begin(A)+1,
+                           std::begin(A)+5,
+                           std::begin(A_E)+1,
+                           std::begin(A_E)+5,
+                           sizeof(A[0]),
+                           STR_equal_to );
+    ASSERT_FALSE( result );
+}
+/*}}}*/
+/*}}}*/
 
-// TEST(StringRange, UniqueOneIs)
-// {
-//     std::string A[]{ "aa", "ff", "cc", "cc", "ff", "qq", "aa" };
-//     std::string A_E[]{ "aa", "ff", "cc", "qq" };
-
-//     std::string * result;
-//     result = static_cast< std::string * >(
-//             graal::unique( 
-//                 std::begin(A), 
-//                 std::end(A), 
-//                 sizeof(A[0]), 
-//                 STR_equal_to
-//                 )
-//             );
-//     ASSERT_TRUE( std::equal( std::begin(A), result, std::begin(A_E) ) );
-// }
-
-// TEST(StringRange, UniqueNoneIs)
-// {
-//     std::string A[]{ "aa", "ff", "cc", "cc", "ff", "aa" };
-//     std::string A_E[]{ "aa", "ff", "cc" };
-
-//     std::string * result;
-//     result = static_cast< std::string * >(
-//             graal::unique( 
-//                 std::begin(A), 
-//                 std::end(A), 
-//                 sizeof(A[0]), 
-//                 STR_equal_to
-//                 )
-//             );
-//     ASSERT_TRUE( std::equal( std::begin(A), result, std::begin(A_E) ) );
-// }
-// /*}}}*/
-// /* StringRange -> partition() tests {{{ */
-// TEST(StringRange, PartitionAllAreTrue)
-// {
-//     std::string A[]{ "bb", "cc", "dd", "ee", "ff" };
-//     std::string A_E[]{ "bb", "cc", "dd", "ee", "ff" };
-//     auto result = graal::partition( std::begin(A), std::end(A), sizeof(A[0]), STR_bigg_than );
-//     bool alpha = result == std::end(A);
-//     ASSERT_TRUE( std::equal( std::begin(A), std::end(A), std::begin(A_E) ) && alpha );
-// }
-
-// TEST(StringRange, PartitionSomeAreTrue)
-// {
-//     std::string A[]{ "aa", "cc", "dd", "aa", "ff" };
-//     std::string A_E[]{ "cc", "dd", "ff", "aa", "aa" };
-//     auto result = graal::partition( std::begin(A), std::end(A), sizeof(A[0]), STR_bigg_than );
-//     bool alpha = result == std::begin(A)+3;
-//     ASSERT_TRUE( std::equal( std::begin(A), std::end(A), std::begin(A_E) ) && alpha );
-// }
-
-// TEST(StringRange, PartitionOneIsTrue)
-// {
-//     std::string A[]{ "aa", "aa", "aa", "aa", "ff" };
-//     std::string A_E[]{ "ff", "aa", "aa", "aa", "aa" };
-//     auto result = graal::partition( std::begin(A), std::end(A), sizeof(A[0]), STR_bigg_than );
-//     bool alpha = result == std::begin(A)+1;
-//     ASSERT_TRUE( std::equal( std::begin(A), std::end(A), std::begin(A_E) ) && alpha );
-// }
-
-// TEST(StringRange, PartitionNoneIsTrue)
-// {
-//     std::string A[]{ "aa", "aa", "aa", "aa", "aa" };
-//     std::string A_E[]{ "aa", "aa", "aa", "aa", "aa" };
-//     auto result = graal::partition( std::begin(A), std::end(A), sizeof(A[0]), STR_bigg_than );
-//     bool alpha = result == std::begin(A);
-//     ASSERT_TRUE( std::equal( std::begin(A), std::end(A), std::begin(A_E) ) && alpha );
-// }
-// /*}}}*/
-// /* StringRange -> sort() tests {{{*/
-// TEST(StringRange, BasicSort){
-//     std::string A[]{ "aa", "cc", "gg", "ff", "ee", "dd", "bb" };
-//     std::string A_O[]{ "aa", "bb", "cc", "dd", "ee", "ff", "gg" };
-
-//     using_lib::qsort( 
-//         std::begin(A), 
-//         std::distance(std::begin(A), std::end(A)), 
-//         sizeof(A[0]), 
-//         STR_sort_comp );
-
-//     bool result = std::equal( std::begin(A), std::end(A), std::begin(A_O) );
-//     ASSERT_TRUE( result );
-// }
-
-// TEST(StringRange, DuplicatedMembersSort){
-//     std::string A[]{ "gg", "ff", "ee", "dd", "aa", "aa", "aa" };
-//     std::string A_O[]{ "aa", "aa", "aa", "dd", "ee", "ff", "gg" };
-
-//     using_lib::qsort( 
-//         std::begin(A), 
-//         std::distance(std::begin(A), std::end(A)), 
-//         sizeof(A[0]), 
-//         STR_sort_comp );
-
-//     bool result = std::equal( std::begin(A), std::end(A), std::begin(A_O) );
-//     ASSERT_TRUE( result );
-// }
-// /*}}}*/
-// /*}}}*/
-
-// int main(int argc, char** argv)
-// {
-//     ::testing::InitGoogleTest(&argc, argv);
-//     return RUN_ALL_TESTS();
-// }
+int main(int argc, char** argv)
+{
+    ::testing::InitGoogleTest(&argc, argv);
+    return RUN_ALL_TESTS();
+}
